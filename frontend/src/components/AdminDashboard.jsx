@@ -43,6 +43,11 @@ const AdminDashboard = () => {
                   <span className="icon mr-1">👥</span> Manajemen Users
                 </Link>
               </li>
+              <li>
+                <Link to="/admin/janji" className="has-text-white">
+                  <span className="icon mr-1">📝</span> Manajemen Reservasi
+                </Link>
+              </li>
             </ul>
           </aside>
         )}

@@ -6,9 +6,10 @@ const EditDokter = () => {
   const [nama, setNama] = useState("");
   const [gender, setGender] = useState("");
   const [spesialis, setSpesialis] = useState("");
-  const [newFoto, setNewFoto] = useState(null); 
-  const [currentFotoUrl, setCurrentFotoUrl] = useState(""); 
-  
+  const [newFoto, setNewFoto] = useState(null);
+  const [currentFotoUrl, setCurrentFotoUrl] = useState("");
+  const [no_tlp, setNo_tlp] = useState("");
+
   const navigate = useNavigate();
   const { id } = useParams();
 
@@ -19,8 +20,9 @@ const EditDokter = () => {
       setNama(data.nama);
       setGender(data.gender);
       setSpesialis(data.spesialis);
+      setNo_tlp(data.no_tlp);
       if (data.foto) {
-        setCurrentFotoUrl(`http://localhost:5000${data.foto}`);
+        setCurrentFotoUrl(`http://localhost:5000/images/${data.foto}`);
       } else {
         setCurrentFotoUrl("");
       }
@@ -37,7 +39,7 @@ const EditDokter = () => {
     const file = e.target.files[0];
     if (file) {
       setNewFoto(file);
-      setCurrentFotoUrl(URL.createObjectURL(file)); 
+      setCurrentFotoUrl(URL.createObjectURL(file));
     } else {
       setNewFoto(null);
     }
@@ -50,9 +52,10 @@ const EditDokter = () => {
     formData.append("nama", nama);
     formData.append("gender", gender);
     formData.append("spesialis", spesialis);
+    formData.append("no_tlp", no_tlp);
 
     if (newFoto) {
-      formData.append("foto", newFoto); 
+      formData.append("foto", newFoto);
     }
 
     try {
@@ -81,6 +84,7 @@ const EditDokter = () => {
                 placeholder="Nama Dokter"
                 value={nama}
                 onChange={(e) => setNama(e.target.value)}
+                required
               />
             </div>
           </div>
@@ -89,7 +93,7 @@ const EditDokter = () => {
             <label className="label">Gender</label>
             <div className="control">
               <div className="select is-fullwidth">
-                <select value={gender} onChange={(e) => setGender(e.target.value)}>
+                <select value={gender} onChange={(e) => setGender(e.target.value)} required>
                   <option value="Laki-laki">Laki-laki</option>
                   <option value="Perempuan">Perempuan</option>
                 </select>
@@ -106,6 +110,21 @@ const EditDokter = () => {
                 placeholder="Spesialis"
                 value={spesialis}
                 onChange={(e) => setSpesialis(e.target.value)}
+                required
+              />
+            </div>
+          </div>
+
+          <div className="field">
+            <label className="label">No Telepon</label>
+            <div className="control">
+              <input
+                type="tel"
+                className="input"
+                placeholder="No Telepon"
+                value={no_tlp}
+                onChange={(e) => setNo_tlp(e.target.value)}
+                required
               />
             </div>
           </div>
@@ -128,7 +147,7 @@ const EditDokter = () => {
               </figure>
             </div>
           )}
-          
+
           <div className="field">
             <button type="submit" className="button is-success">
               Update

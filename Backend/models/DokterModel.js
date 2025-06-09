@@ -6,7 +6,8 @@ const Dokter = db.define('dokters', {
     nama: DataTypes.STRING,
     gender: DataTypes.STRING,
     spesialis: DataTypes.STRING,
-    foto: DataTypes.STRING 
+    no_tlp: DataTypes.STRING,
+    foto: DataTypes.STRING
 }, {
     freezeTableName: true
 });

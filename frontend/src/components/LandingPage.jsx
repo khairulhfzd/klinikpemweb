@@ -64,7 +64,7 @@ const LandingPage = () => {
               <div className="column is-6 has-text-centered">
                 <figure className="image is-4by3">
                   <img
-                    src="./dokter1.jpeg"
+                    src="./dokter.png"
                     alt="Ilustrasi Dokter"
                     style={{ maxHeight: '300px', objectFit: 'contain' }}
                   />

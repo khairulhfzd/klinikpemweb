@@ -1,81 +1,93 @@
 import Dokter from "../models/DokterModel.js";
 
-export const getDokters = async(req, res) => {
+// GET semua dokter
+export const getDokters = async (req, res) => {
     try {
         const response = await Dokter.findAll();
         res.status(200).json(response);
-    } catch (error){
+    } catch (error) {
         console.log(error.message);
-    } 
-}
+        res.status(500).json({ msg: "Gagal mengambil data dokter" });
+    }
+};
 
-export const getDokterById = async(req, res) => {
+// GET dokter berdasarkan ID
+export const getDokterById = async (req, res) => {
     try {
         const response = await Dokter.findOne({
-            where:{
-                id: req.params.id
-            }
+            where: { id: req.params.id }
         });
+        if (!response) {
+            return res.status(404).json({ msg: "Dokter tidak ditemukan" });
+        }
         res.status(200).json(response);
-    } catch (error){
+    } catch (error) {
         console.log(error.message);
-    } 
-}
+        res.status(500).json({ msg: "Gagal mengambil data dokter" });
+    }
+};
 
+// POST dokter baru
 export const createDokter = async (req, res) => {
-  const { nama, gender, spesialis } = req.body;
-  const foto = req.file ? req.file.filename : null;
+    // Menghapus 'jadwal' dari destructuring req.body
+    const { nama, gender, spesialis, no_tlp } = req.body;
+    const foto = req.file ? req.file.filename : null;
 
-  try {
-    await Dokter.create({ nama, gender, spesialis, foto });
-    res.status(201).json({ msg: "Dokter created" });
-  } catch (error) {
-    console.log(error.message);
-    res.status(500).json({ msg: "Gagal membuat dokter" });
-  }
+    // Menghapus bagian parsing jadwal karena kolom 'jadwal' sudah tidak ada di model Dokter
+
+    try {
+        await Dokter.create({
+            nama,
+            gender,
+            spesialis,
+            no_tlp,
+            // Menghapus 'jadwal: jadwalObj' dari objek yang dibuat
+            foto
+        });
+        res.status(201).json({ msg: "Dokter berhasil dibuat" });
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json({ msg: "Gagal membuat dokter" });
+    }
 };
 
-
+// PUT update data dokter
 export const updateDokter = async (req, res) => {
-  const { nama, gender, spesialis } = req.body;
-  let foto;
+    // Menghapus 'jadwal' dari destructuring req.body
+    const { nama, gender, spesialis, no_tlp } = req.body;
 
-  // Cari data dokter lama
-  const dokter = await Dokter.findOne({ where: { id: req.params.id } });
-  if (!dokter) return res.status(404).json({ msg: "Dokter tidak ditemukan" });
+    const dokter = await Dokter.findOne({ where: { id: req.params.id } });
+    if (!dokter) return res.status(404).json({ msg: "Dokter tidak ditemukan" });
 
-  // Cek apakah user upload file baru
-  if (req.file) {
-    foto = req.file.filename;
-    // TODO: Optional: hapus file lama dari filesystem kalau perlu
-  } else {
-    foto = dokter.foto; // kalau tidak ada file baru, pakai foto lama
-  }
+    let foto = dokter.foto;
+    if (req.file) {
+        foto = req.file.filename;
+        // TODO: Hapus file lama dari sistem jika diperlukan
+    }
 
-  try {
-    await Dokter.update(
-      { nama, gender, spesialis, foto },
-      {
-        where: { id: req.params.id }
-      }
-    );
-    res.status(200).json({ msg: "Dokter updated" });
-  } catch (error) {
-    console.log(error.message);
-    res.status(500).json({ msg: "Gagal mengupdate dokter" });
-  }
+    // Menghapus bagian parsing jadwal karena kolom 'jadwal' sudah tidak ada di model Dokter
+
+    try {
+        await Dokter.update(
+            { nama, gender, spesialis, no_tlp, foto }, // Menghapus 'jadwal: jadwalObj' dari objek update
+            { where: { id: req.params.id } }
+        );
+        res.status(200).json({ msg: "Dokter berhasil diperbarui" });
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json({ msg: "Gagal memperbarui dokter" });
+    }
 };
 
-export const deleteDokter = async(req, res) =>{
+// DELETE dokter
+export const deleteDokter = async (req, res) => {
     try {
         await Dokter.destroy({
-            where:{
-                id: req.params.id
-            }
+            where: { id: req.params.id }
         });
-        res.status(200).json({msg: "Dokter deleted"});
-    } catch (error){
+        res.status(200).json({ msg: "Dokter berhasil dihapus" });
+    } catch (error) {
         console.log(error.message);
+        res.status(500).json({ msg: "Gagal menghapus dokter" });
     }
-}
-
+};

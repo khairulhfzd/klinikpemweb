@@ -14,6 +14,10 @@ import UserList from './components/user/UserList';
 import AddUser from './components/user/AddUser';
 import EditUser from './components/user/EditUser';
 
+import JanjiList from './components/janji/JanjiList';
+import AddJanji from './components/janji/AddJanji';
+import EditJanji from './components/janji/EditJanji';
+
 function App() {
   return (
     <Router>
@@ -33,6 +37,10 @@ function App() {
           <Route path="user" element={<UserList />} />
           <Route path="user/add" element={<AddUser />} />
           <Route path="user/edit/:id" element={<EditUser />} />
+
+          <Route path="janji" element={<JanjiList />} />
+          <Route path="janji/add" element={<AddJanji />} />
+          <Route path="janji/edit/:id" element={<EditJanji />} />
         </Route>
       </Routes>
     </Router>

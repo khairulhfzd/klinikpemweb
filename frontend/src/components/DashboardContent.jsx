@@ -5,30 +5,23 @@ const DashboardContent = () => {
   const [summary, setSummary] = useState({
     totalDoctors: 0,
     totalVisits: 0,
-    totalMedicines: 0,
+    totalReservations: 0,
   });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchSummary = async () => {
       try {
-        // Fetch data dokter dan user secara paralel
-        const [doktersRes, usersRes] = await Promise.all([
+        const [doktersRes, usersRes, janjiRes] = await Promise.all([
           axios.get('http://localhost:5000/dokters'),
           axios.get('http://localhost:5000/users'),
-          // axios.get('http://localhost:5000/medicines') // kalau ada
+          axios.get('http://localhost:5000/janji'),
         ]);
 
-        const totalDoctors = doktersRes.data.length;
-        const totalVisits = usersRes.data.length; // asumsi users = kunjungan pasien
-
-        // Jika kamu punya data obat, bisa tambahkan juga:
-        // const totalMedicines = medicinesRes.data.length;
-
         setSummary({
-          totalDoctors,
-          totalVisits,
-          totalMedicines: 3584, // kalau tidak ada API obat, tetap hardcode dulu
+          totalDoctors: doktersRes.data.length,
+          totalVisits: usersRes.data.length,
+          totalReservations: janjiRes.data.length,
         });
       } catch (err) {
         console.error('Error fetching dashboard data:', err);
@@ -45,35 +38,19 @@ const DashboardContent = () => {
   return (
     <div className="columns is-multiline is-variable is-4">
       <div className="column is-one-third">
-        <div
-          className="box has-text-centered"
-          style={{
-            borderRadius: '12px',
-            padding: '2rem',
-            background: '#fff',
-            boxShadow: '0 4px 10px rgba(0,0,0,0.1)',
-          }}
-        >
+        <div className="box has-text-centered" style={cardStyle}>
           <span className="icon is-large has-text-link">
             <i className="fa fa-user-md fa-2x"></i>
           </span>
           <h1 className="title is-4 mt-2">
             {summary.totalDoctors.toLocaleString()}<sup>+</sup>
           </h1>
-          <p>Total Dokter Terdaftar di klinik Sehat</p>
+          <p>Total Dokter Terdaftar di Klinik Sehat</p>
         </div>
       </div>
 
       <div className="column is-one-third">
-        <div
-          className="box has-text-centered"
-          style={{
-            borderRadius: '12px',
-            padding: '2rem',
-            background: '#fff',
-            boxShadow: '0 4px 10px rgba(0,0,0,0.1)',
-          }}
-        >
+        <div className="box has-text-centered" style={cardStyle}>
           <span className="icon is-large has-text-link">
             <i className="fas fa-users fa-2x"></i>
           </span>
@@ -85,26 +62,25 @@ const DashboardContent = () => {
       </div>
 
       <div className="column is-one-third">
-        <div
-          className="box has-text-centered"
-          style={{
-            borderRadius: '12px',
-            padding: '2rem',
-            background: '#fff',
-            boxShadow: '0 4px 10px rgba(0,0,0,0.1)',
-          }}
-        >
+        <div className="box has-text-centered" style={cardStyle}>
           <span className="icon is-large has-text-link">
-            <i className="fa fa-medkit fa-2x"></i>
+            <i className="fa fa-calendar-check fa-2x"></i>
           </span>
           <h1 className="title is-4 mt-2">
-            {summary.totalMedicines.toLocaleString()}<sup>+</sup>
+            {summary.totalReservations.toLocaleString()}<sup>+</sup>
           </h1>
-          <p>Total Jenis Obat di Klinik Sehat</p>
+          <p>Total Data Reservasi Janji Temu</p>
         </div>
       </div>
     </div>
   );
+};
+
+const cardStyle = {
+  borderRadius: '12px',
+  padding: '2rem',
+  background: '#fff',
+  boxShadow: '0 4px 10px rgba(0,0,0,0.1)',
 };
 
 export default DashboardContent;

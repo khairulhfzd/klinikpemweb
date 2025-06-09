@@ -36,6 +36,7 @@ const UserList = () => {
   return (
     <div className="columns is-centered mt-5">
       <div className="column is-11">
+        <h2 className="title is-4 has-text-centered">Daftar Users</h2>
         <Link to="./add" className="button is-primary is-rounded mb-4">
           <FaPlus className="mr-2" /> Tambah Pasien
         </Link>
