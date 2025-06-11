@@ -77,16 +77,15 @@ const LandingPage = () => {
 
       {/* Daftar Dokter */}
       <section id="dokter" className="section has-background-light">
-        <h2 className="title has-text-centered mb-6">Layanan Kami</h2>
+        <h2 className="title has-text-centered mb-6">Daftar Dokter</h2>
         <div className="columns is-multiline is-centered">
 
           {/* Pemeriksaan Umum */}
           <div className="column is-one-third">
             <div className="box has-text-centered">
               <span className="icon is-large has-text-info mb-3">
-                <i className="fas fa-stethoscope fa-2x"></i>
               </span>
-              <img src="./dokter1.jpeg" alt="1" style={{ width: '200px', height: 'auto' }} />
+              <img src="./dokter.png" alt="1" style={{ width: '200px', height: 'auto' }} />
               <h3 className="subtitle is-5">Pemeriksaan Umum</h3>
               <p>Layanan kesehatan umum untuk semua usia.</p>
             </div>
@@ -96,9 +95,8 @@ const LandingPage = () => {
           <div className="column is-one-third">
             <div className="box has-text-centered">
               <span className="icon is-large has-text-success mb-3">
-                <i className="fas fa-syringe fa-2x"></i>
               </span>
-              <img src="./dokter1.jpeg" alt="1" style={{ width: '200px', height: 'auto', alignItems: 'centered' }} />
+              <img src="./dokter.png" alt="1" style={{ width: '200px', height: 'auto', alignItems: 'centered' }} />
               <h3 className="subtitle is-5">Vaksinasi</h3>
               <p>Tersedia berbagai jenis vaksin untuk anak dan dewasa.</p>
             </div>
@@ -108,9 +106,8 @@ const LandingPage = () => {
           <div className="column is-one-third">
             <div className="box has-text-centered">
               <span className="icon is-large has-text-danger mb-3">
-                <i className="fas fa-vials fa-2x"></i>
               </span>
-              <img src="./dokter1.jpeg" alt="1" style={{ width: '200px', height: 'auto' }} />
+              <img src="./dokter.png" alt="1" style={{ width: '200px', height: 'auto' }} />
               <h3 className="subtitle is-5">Laboratorium</h3>
               <p>Tes darah, urin, dan pemeriksaan lainnya.</p>
             </div>

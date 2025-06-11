@@ -5,10 +5,12 @@ import { useNavigate, useParams } from 'react-router-dom';
 const EditUser = () => {
   const [nama, setNama] = useState("");
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState(""); // opsional jika tidak ingin ubah password
+  const [password, setPassword] = useState(""); // opsional
   const [gender, setGender] = useState("");
   const [alamat, setAlamat] = useState("");
   const [no_tlp, setNo_tlp] = useState("");
+  const [newFoto, setNewFoto] = useState(null);
+  const [currentFotoUrl, setCurrentFotoUrl] = useState("");
 
   const navigate = useNavigate();
   const { id } = useParams();
@@ -22,6 +24,9 @@ const EditUser = () => {
       setGender(data.gender);
       setAlamat(data.alamat);
       setNo_tlp(data.no_tlp);
+      if (data.foto) {
+        setCurrentFotoUrl(`http://localhost:5000/images/${data.foto}`);
+      }
     } catch (err) {
       console.error("Gagal mengambil data user:", err);
     }
@@ -31,22 +36,35 @@ const EditUser = () => {
     getUserById();
   }, [getUserById]);
 
+  const loadImage = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setNewFoto(file);
+      setCurrentFotoUrl(URL.createObjectURL(file));
+    } else {
+      setNewFoto(null);
+    }
+  };
+
   const updateUser = async (e) => {
     e.preventDefault();
+    const formData = new FormData();
+    formData.append("nama", nama);
+    formData.append("email", email);
+    if (password) formData.append("password", password);
+    formData.append("gender", gender);
+    formData.append("alamat", alamat);
+    formData.append("no_tlp", no_tlp);
+    if (newFoto) formData.append("foto", newFoto);
 
     try {
-      await axios.patch(`http://localhost:5000/users/${id}`, {
-        nama,
-        email,
-        password: password || undefined, // kirim password hanya jika diisi
-        gender,
-        alamat,
-        no_tlp,
+      await axios.patch(`http://localhost:5000/users/${id}`, formData, {
+        headers: { "Content-Type": "multipart/form-data" }
       });
       navigate("/admin/user");
     } catch (error) {
       console.error("Gagal update user:", error.response || error.message || error);
-      alert("Gagal memperbarui data user. Cek console untuk detail.");
+      alert("Gagal memperbarui data user.");
     }
   };
 
@@ -57,41 +75,21 @@ const EditUser = () => {
           <div className="field">
             <label className="label">Nama</label>
             <div className="control">
-              <input
-                type="text"
-                className="input"
-                value={nama}
-                onChange={(e) => setNama(e.target.value)}
-                placeholder="Nama Lengkap"
-                required
-              />
+              <input type="text" className="input" value={nama} onChange={(e) => setNama(e.target.value)} required />
             </div>
           </div>
 
           <div className="field">
             <label className="label">Email</label>
             <div className="control">
-              <input
-                type="email"
-                className="input"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Email"
-                required
-              />
+              <input type="email" className="input" value={email} onChange={(e) => setEmail(e.target.value)} required />
             </div>
           </div>
 
           <div className="field">
             <label className="label">Password (biarkan kosong jika tidak diubah)</label>
             <div className="control">
-              <input
-                type="password"
-                className="input"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Password Baru"
-              />
+              <input type="password" className="input" value={password} onChange={(e) => setPassword(e.target.value)} />
             </div>
           </div>
 
@@ -111,30 +109,31 @@ const EditUser = () => {
           <div className="field">
             <label className="label">Alamat</label>
             <div className="control">
-              <input
-                type="text"
-                className="input"
-                value={alamat}
-                onChange={(e) => setAlamat(e.target.value)}
-                placeholder="Alamat"
-                required
-              />
+              <input type="text" className="input" value={alamat} onChange={(e) => setAlamat(e.target.value)} required />
             </div>
           </div>
 
           <div className="field">
             <label className="label">No. Telepon</label>
             <div className="control">
-              <input
-                type="text"
-                className="input"
-                value={no_tlp}
-                onChange={(e) => setNo_tlp(e.target.value)}
-                placeholder="Nomor Telepon"
-                required
-              />
+              <input type="text" className="input" value={no_tlp} onChange={(e) => setNo_tlp(e.target.value)} required />
             </div>
           </div>
+
+          <div className="field">
+            <label className="label">Foto</label>
+            <div className="control">
+              <input type="file" className="input" onChange={loadImage} />
+            </div>
+          </div>
+
+          {currentFotoUrl && (
+            <div className="field">
+              <figure className="image is-64x64">
+                <img src={currentFotoUrl} alt="Foto User" />
+              </figure>
+            </div>
+          )}
 
           <div className="field">
             <button type="submit" className="button is-success">

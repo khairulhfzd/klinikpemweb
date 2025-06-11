@@ -57,6 +57,7 @@ const UserList = () => {
                   <th>Gender</th>
                   <th>Alamat</th>
                   <th>No Telp</th>
+                  <th>Foto</th> {/* Kolom foto ditambahkan */}
                   <th className="has-text-centered">Aksi</th>
                 </tr>
               </thead>
@@ -90,13 +91,27 @@ const UserList = () => {
                     </td>
                     <td>
                       <span
-                        className={`tag is-rounded is-medium ${user.gender === "Laki-laki" ? "is-link" : "is-warning"}`}
+                        className={`tag is-rounded is-medium ${
+                          user.gender === "Laki-laki" ? "is-link" : "is-warning"
+                        }`}
                       >
                         {user.gender}
                       </span>
                     </td>
                     <td>{user.alamat}</td>
                     <td>{user.no_tlp}</td>
+                    <td>
+                      {user.foto ? (
+                        <img
+                          src={`http://localhost:5000/images/${user.foto}`}
+                          alt="Foto User"
+                          width="50"
+                          style={{ borderRadius: "5px" }}
+                        />
+                      ) : (
+                        <span className="has-text-grey-light">-</span>
+                      )}
+                    </td>
                     <td className="has-text-centered">
                       <Link
                         to={`/admin/user/edit/${user.id}`}
@@ -117,7 +132,7 @@ const UserList = () => {
                 ))}
                 {users.length === 0 && (
                   <tr>
-                    <td colSpan="8" className="has-text-centered has-text-grey-light">
+                    <td colSpan="9" className="has-text-centered has-text-grey-light">
                       Tidak ada data Pasien.
                     </td>
                   </tr>

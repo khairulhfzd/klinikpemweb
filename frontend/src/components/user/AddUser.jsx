@@ -9,21 +9,39 @@ const AddUser = () => {
   const [gender, setGender] = useState("");
   const [alamat, setAlamat] = useState("");
   const [no_tlp, setNo_tlp] = useState("");
-  const [showPassword, setShowPassword] = useState(false); // 👈 state tambahan
+  const [foto, setFoto] = useState(null);
+  const [showPassword, setShowPassword] = useState(false);
 
   const navigate = useNavigate();
+
+  const loadImage = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setFoto(file);
+    } else {
+      setFoto(null);
+    }
+  };
 
   const saveUser = async (e) => {
     e.preventDefault();
 
+    const formData = new FormData();
+    formData.append("nama", nama);
+    formData.append("email", email);
+    formData.append("password", password);
+    formData.append("gender", gender);
+    formData.append("alamat", alamat);
+    formData.append("no_tlp", no_tlp);
+    if (foto) {
+      formData.append("foto", foto);
+    }
+
     try {
-      await axios.post("http://localhost:5000/users", {
-        nama,
-        email,
-        password,
-        gender,
-        alamat,
-        no_tlp,
+      await axios.post("http://localhost:5000/users", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       });
 
       navigate("/admin/user");
@@ -78,7 +96,7 @@ const AddUser = () => {
             <label className="label">Password</label>
             <div className="control">
               <input
-                type={showPassword ? "text" : "password"} // 👈 toggle type
+                type={showPassword ? "text" : "password"}
                 className="input"
                 placeholder="Password"
                 value={password}
@@ -140,6 +158,18 @@ const AddUser = () => {
                 value={no_tlp}
                 onChange={(e) => setNo_tlp(e.target.value)}
                 required
+              />
+            </div>
+          </div>
+
+          {/* Foto */}
+          <div className="field">
+            <label className="label">Foto</label>
+            <div className="control">
+              <input
+                type="file"
+                className="input"
+                onChange={loadImage}
               />
             </div>
           </div>
