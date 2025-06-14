@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import SidebarContext from './SidebarContext';
 
 const AdminDashboard = () => {
@@ -15,48 +16,61 @@ const AdminDashboard = () => {
   return (
     <SidebarContext.Provider value={{ isSidebarOpen, toggleSidebar }}>
       <div style={styles.container}>
-        {/* Sidebar */}
-        {isSidebarOpen && (
-          <aside style={styles.sidebar}>
-            <div style={styles.sidebarHeader}>
-              <h2 style={styles.sidebarTitle}>Admin Panel</h2>
-            </div>
-            <p style={styles.menuLabel}>MENU NAVIGASI</p>
-            <ul style={styles.menuList}>
-              <li style={styles.menuItem}>
-                <Link to="/admin" style={styles.menuLink}>
-                  <span style={styles.icon}>🗂️</span> Dashboard
-                </Link>
-              </li>
-              <li style={styles.menuItem}>
-                <Link to="/admin/dokter" style={styles.menuLink}>
-                  <span style={styles.icon}>👨🏻‍⚕️</span> Manajemen Dokter
-                </Link>
-              </li>
-              <li style={styles.menuItem}>
-                <Link to="/admin/user" style={styles.menuLink}>
-                  <span style={styles.icon}>👥</span> Manajemen Users
-                </Link>
-              </li>
-              <li style={styles.menuItem}>
-                <Link to="/admin/janji" style={styles.menuLink}>
-                  <span style={styles.icon}>📝</span> Manajemen Reservasi
-                </Link>
-              </li>
-            </ul>
-          </aside>
-        )}
+        {/* Sidebar dengan animasi */}
+        <motion.aside
+          style={{
+            ...styles.sidebar,
+            position: 'fixed',
+            top: 0,
+            bottom: 0,
+            left: 0,
+            zIndex: 1,
+          }}
+          initial={{ x: -250, opacity: 0 }}
+          animate={isSidebarOpen ? { x: 0, opacity: 1 } : { x: -250, opacity: 0 }}
+          transition={{ duration: 0.4, ease: "easeInOut" }}
+        >
+          <div style={styles.sidebarHeader}>
+            <h2 style={styles.sidebarTitle}>Admin Panel</h2>
+          </div>
+          <p style={styles.menuLabel}>MENU NAVIGASI</p>
+          <ul style={styles.menuList}>
+            <li style={styles.menuItem}>
+              <Link to="/admin" style={styles.menuLink}>
+                <span style={styles.icon}>🗂️</span> Dashboard
+              </Link>
+            </li>
+            <li style={styles.menuItem}>
+              <Link to="/admin/dokter" style={styles.menuLink}>
+                <span style={styles.icon}>👨🏻‍⚕️</span> Manajemen Dokter
+              </Link>
+            </li>
+            <li style={styles.menuItem}>
+              <Link to="/admin/user" style={styles.menuLink}>
+                <span style={styles.icon}>👥</span> Manajemen Users
+              </Link>
+            </li>
+            <li style={styles.menuItem}>
+              <Link to="/admin/janji" style={styles.menuLink}>
+                <span style={styles.icon}>📝</span> Manajemen Reservasi
+              </Link>
+            </li>
+          </ul>
+        </motion.aside>
 
         {/* Main Content Area */}
-        <div style={styles.mainContentArea}>
+        <div
+          style={{
+            ...styles.mainContentArea,
+            marginLeft: isSidebarOpen ? '250px' : '0',
+            transition: 'margin 0.4s ease-in-out',
+          }}
+        >
           {showDashboardHeader && (
             <header style={styles.header}>
               <div style={styles.headerTopRow}>
                 <div style={styles.headerLeft}>
-                  <button
-                    onClick={toggleSidebar}
-                    style={styles.toggleButton}
-                  >
+                  <button onClick={toggleSidebar} style={styles.toggleButton}>
                     ☰
                   </button>
                   <h1 style={styles.pageTitle}>Dashboard Admin</h1>

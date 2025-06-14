@@ -1,220 +1,167 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import React, { useEffect } from 'react';
+import '../reservasi.css'; // Pastikan ini mengimpor file CSS yang sudah diperbarui
+import { motion } from 'framer-motion';
+import AOS from 'aos';
+import 'aos/dist/aos.css';
+import 'animate.css';
+
+// Inisialisasi AOS di luar komponen untuk memastikan hanya sekali
+AOS.init();
 
 const ReservasiPage = () => {
-  const [users, setUsers] = useState([]);
-  const [dokters, setDokters] = useState([]);
-  const [jadwalList, setJadwalList] = useState([]);
-  const [selectedUser, setSelectedUser] = useState('');
-  const [selectedSpesialis, setSelectedSpesialis] = useState('');
-  const [selectedDokterId, setSelectedDokterId] = useState('');
-  const [selectedJadwalId, setSelectedJadwalId] = useState('');
-  const [loading, setLoading] = useState(true); // Tambah state loading
-  const [error, setError] = useState(null); // Tambah state error
+    // Gunakan useEffect untuk inisialisasi AOS jika diperlukan,
+    // atau untuk efek samping lainnya yang hanya berjalan sekali.
+    useEffect(() => {
+        // Jika Anda memiliki elemen yang dimuat secara dinamis setelah render awal,
+        // AOS.refresh() dapat dipanggil di sini.
+        // AOS.refresh();
+    }, []);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        setError(null); // Reset error state
-
-        const [usersRes, doktersRes, jadwalRes] = await Promise.all([
-          axios.get('http://localhost:5000/users'),
-          axios.get('http://localhost:5000/dokters'),
-          axios.get('http://localhost:5000/jadwal'),
-        ]);
-
-        setUsers(usersRes.data);
-        setDokters(doktersRes.data);
-        setJadwalList(jadwalRes.data);
-      } catch (err) {
-        console.error('Gagal mengambil data:', err);
-        setError("Gagal memuat data. Pastikan server backend berjalan dan data tersedia.");
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, []);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    // Validasi dasar form
-    if (!selectedUser || !selectedDokterId || !selectedJadwalId) {
-      alert("Mohon lengkapi semua pilihan (Pengguna, Dokter, Jadwal) sebelum submit.");
-      return;
-    }
-
-    try {
-      await axios.post('http://localhost:5000/janji', {
-        userId: selectedUser,
-        dokterId: selectedDokterId,
-        jadwalId: selectedJadwalId,
-        status: 'pending',
-      });
-
-      alert('Reservasi berhasil dikirim!');
-
-      // reset form
-      setSelectedUser('');
-      setSelectedSpesialis('');
-      setSelectedDokterId('');
-      setSelectedJadwalId('');
-    } catch (err) {
-      console.error('Gagal mengirim reservasi:', err.response?.data || err.message || err);
-      alert('Gagal mengirim reservasi. Silakan coba lagi.');
-    }
-  };
-
-  const selectedDokter = dokters.find(d => d.id === parseInt(selectedDokterId));
-
-  if (loading) {
     return (
-      <section className="hero is-fullheight is-info is-bold">
-        <div className="hero-body">
-          <div className="container has-text-centered">
-            <p className="title">Memuat data...</p>
-            <progress className="progress is-small is-primary" max="100"></progress>
-          </div>
-        </div>
-      </section>
-    );
-  }
-
-  if (error) {
-    return (
-      <section className="hero is-fullheight is-danger is-bold">
-        <div className="hero-body">
-          <div className="container has-text-centered">
-            <p className="title">Terjadi Kesalahan</p>
-            <p className="subtitle">{error}</p>
-          </div>
-        </div>
-      </section>
-    );
-  }
-
-  return (
-    <section className="hero is-fullheight" style={{ background: 'linear-gradient(135deg, #e3f2fd, #bbdefb)', paddingTop: '3rem' }}>
-      <div className="container" style={{ maxWidth: '700px' }}>
-        <div className="box" style={{ borderRadius: '12px' }}>
-          <h2 className="title has-text-centered has-text-link mb-5">Formulir Reservasi</h2>
-
-          <form onSubmit={handleSubmit}>
-            {/* User Name */}
-            <div className="field">
-              <label className="label">Nama Pengguna</label>
-              <div className="select is-fullwidth is-info">
-                <select value={selectedUser} onChange={(e) => setSelectedUser(e.target.value)} required>
-                  <option value="">Pilih Nama</option>
-                  {users.length === 0 ? (
-                    <option disabled>Tidak ada data pengguna</option>
-                  ) : (
-                    users.map((user) => (
-                      <option key={user.id} value={user.id}>
-                        {user.nama} - {user.no_tlp}
-                      </option>
-                    ))
-                  )}
-                </select>
-              </div>
+        <div className="reservation-container">
+            {/* Hero Section */}
+            <div className="reservation-hero" data-aos="fade-down" data-aos-duration="1000">
+                <h1 className="animate__animated animate__fadeInDown">TABLE RESERVATION</h1>
+                <p className="breadcrumb">Home / Booking</p>
             </div>
 
-            {/* Spesialis */}
-            <div className="field">
-              <label className="label">Spesialis</label>
-              <div className="select is-fullwidth is-info">
-                <select
-                  value={selectedSpesialis}
-                  onChange={(e) => {
-                    setSelectedSpesialis(e.target.value);
-                    setSelectedDokterId('');
-                    setSelectedJadwalId('');
-                  }}
-                  required
-                >
-                  <option value="">Pilih Spesialis</option>
-                  {dokters.length === 0 ? (
-                    <option disabled>Tidak ada data spesialis</option>
-                  ) : (
-                    [...new Set(dokters.map((d) => d.spesialis))].map((sp, index) => (
-                      <option key={index} value={sp}>{sp}</option>
-                    ))
-                  )}
-                </select>
-              </div>
-            </div>
+            {/* Form Reservasi */}
+            <motion.div
+                className="reservation-form-section"
+                initial={{ opacity: 0, y: 50 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 1 }}
+            >
+                <h2>TABLE RESERVATION</h2>
+                <p>
+                    Isi formulir di bawah ini untuk membuat reservasi meja Anda di Klinik Hafizh.
+                    Kami berkomitmen untuk memberikan pelayanan terbaik.
+                </p>
 
-            {/* Dokter */}
-            {selectedSpesialis && (
-              <div className="field">
-                <label className="label">Dokter</label>
-                <div className="select is-fullwidth is-info">
-                  <select
-                    value={selectedDokterId}
-                    onChange={(e) => {
-                        setSelectedDokterId(e.target.value);
-                        setSelectedJadwalId('');
-                    }}
-                    required
-                  >
-                    <option value="">Pilih Dokter</option>
-                    {dokters.filter((d) => d.spesialis === selectedSpesialis).length === 0 ? (
-                      <option disabled>Tidak ada dokter untuk spesialis ini</option>
-                    ) : (
-                      dokters
-                        .filter((d) => d.spesialis === selectedSpesialis)
-                        .map((dokter) => (
-                          <option key={dokter.id} value={dokter.id}>
-                            {dokter.nama}
-                          </option>
-                        ))
-                    )}
-                  </select>
+                <form className="reservation-form">
+                    <div className="form-group">
+                        <input type="date" placeholder="Date" />
+                        <input type="text" placeholder="Nama Lengkap" />
+                    </div>
+                    <div className="form-group">
+                        <input type="email" placeholder="Alamat Email" />
+                        <input type="number" placeholder="Jumlah Tamu" min="1" />
+                    </div>
+                    <div className="form-group">
+                        <input type="time" placeholder="Waktu Kedatangan" />
+                        <input type="tel" placeholder="Nomor Telepon" />
+                    </div>
+                    <div className="form-group full-width">
+                        <textarea placeholder="Pesan atau Keterangan Tambahan (max 300 karakter)" maxLength={300}></textarea>
+                    </div>
+                    <button type="submit" className="btn-submit">BOOK A TABLE →</button>
+                </form>
+            </motion.div>
+
+            {/* --- Bagian Konten dari LandingPage (Daftar Dokter, Tentang Kami, Layanan, Kontak) --- */}
+
+            {/* Daftar Dokter */}
+            <section id="dokter" className="section has-background-light">
+                <h2 className="title has-text-black has-text-centered mb-6" data-aos="fade-up">Daftar Dokter</h2>
+                <div className="columns is-multiline is-centered">
+                    {[
+                        { img: './dokter.png', title: 'Dr. Ahmad Fauzi', desc: 'Spesialis Penyakit Dalam' },
+                        { img: './dokter.png', title: 'Dr. Siti Aminah', desc: 'Spesialis Anak' },
+                        { img: './dokter.png', title: 'Dr. Budi Santoso', desc: 'Dokter Gigi Umum' }
+                    ].map((item, i) => (
+                        <div key={i} className="column is-one-third" data-aos="zoom-in" data-aos-delay={i * 300}>
+                            <div className="box has-text-centered">
+                                {/* Mengurangi ukuran gambar dokter */}
+                                <img src={item.img} alt={item.title} style={{ width: '200px', height: 'auto' }} />
+                                <h3 className="subtitle is-5 has-text-black">{item.title}</h3>
+                                <p>{item.desc}</p>
+                            </div>
+                        </div>
+                    ))}
                 </div>
-              </div>
-            )}
+            </section>
 
-            {/* Foto Dokter */}
-            {selectedDokter && selectedDokter.foto && (
-              <div className="field has-text-centered">
-                <figure className="image is-128x128 is-inline-block mt-2">
-                  <img className="is-rounded" src={`http://localhost:5000/images/${selectedDokter.foto}`} alt={selectedDokter.nama} />
-                </figure>
-                <p className="has-text-weight-semibold mt-2">{selectedDokter.nama}</p>
-              </div>
-            )}
+            {/* Tentang Kami */}
+            <section id="about" className="section">
+                <div className="container">
+                    <div className="columns is-vcentered is-variable is-8">
+                        <div className="column is-6 has-text-centered" data-aos="fade-right">
+                            <figure className="image is-4by3">
+                                <img
+                                    src="https://cdn.pixabay.com/photo/2020/06/17/11/09/doctor-5301226_960_720.png"
+                                    alt="Ilustrasi Klinik"
+                                    style={{ maxHeight: '300px', objectFit: 'contain' }}
+                                />
+                            </figure>
+                        </div>
+                        <div className="column is-6 has-text-left" data-aos="fade-left">
+                            <h2 className="title is-3 has-text-black mb-3">
+                                Tentang <span style={{ color: 'var(--primary-light)' }}>Klinik Kami</span>
+                            </h2>
+                            <p className="subtitle is-5 has-text-black mb-4">
+                                Klinik Sehat telah berdiri sejak 2010 dan berkomitmen untuk memberikan pelayanan kesehatan berkualitas.
+                            </p>
+                            <p className="has-text-black mb-4">
+                                Kami melayani berbagai kebutuhan kesehatan mulai dari pemeriksaan umum, vaksinasi, hingga layanan laboratorium modern. Selalu mengutamakan kenyamanan dan keamanan pasien.
+                            </p>
+                            <a href="/tentang" className="button animate__animated animate__fadeInUp" data-aos="fade-up" data-aos-delay="500">
+                                Selengkapnya
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section>
 
-            {/* Jadwal - Sekarang mengambil dari jadwalList (tabel Jadwal) */}
-            <div className="field">
-              <label className="label">Jadwal</label>
-              <div className="select is-fullwidth is-info">
-                <select value={selectedJadwalId} onChange={(e) => setSelectedJadwalId(e.target.value)} required>
-                  <option value="">Pilih Jadwal</option>
-                  {jadwalList.length === 0 ? (
-                    <option disabled>Tidak ada data jadwal</option>
-                  ) : (
-                    jadwalList.map((jadwalItem) => (
-                      <option key={jadwalItem.id} value={jadwalItem.id}>
-                        {jadwalItem.hari} - {jadwalItem.waktu}
-                      </option>
-                    ))
-                  )}
-                </select>
-              </div>
-            </div>
+            {/* Layanan */}
+            <section id="services" className="section has-background-light">
+                <div className="container">
+                    <h2 className="title has-text-black has-text-centered mb-6" data-aos="fade-up">Layanan Kami</h2>
+                    <div className="columns is-multiline is-centered">
+                        {[
+                            { icon: 'fa-stethoscope', title: 'Pemeriksaan Umum', desc: 'Layanan kesehatan umum untuk semua usia.' },
+                            { icon: 'fa-syringe', title: 'Vaksinasi', desc: 'Tersedia berbagai jenis vaksin untuk anak dan dewasa.' },
+                            { icon: 'fa-vials', title: 'Laboratorium', desc: 'Tes darah, urin, dan pemeriksaan lainnya.' }
+                        ].map((item, i) => (
+                            <div key={i} className="column is-one-third" data-aos="fade-up" data-aos-delay={i * 300}>
+                                <div className="box has-text-centered">
+                                    <span className={`icon is-large mb-3`}>
+                                        <i className={`fas ${item.icon} fa-2x`}></i>
+                                    </span>
+                                    <h3 className="subtitle is-5 has-text-black">{item.title}</h3>
+                                    <p>{item.desc}</p>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                    {/* Tombol "Reservasi Online" Dihapus dari sini */}
+                </div>
+            </section>
 
-            <div className="field has-text-centered mt-5">
-              <button className="button is-link is-medium" type="submit">
-                Kirim Reservasi
-              </button>
-            </div>
-          </form>
+            {/* Kontak */}
+            <section id="contact" className="section" data-aos="fade-up">
+                <div className="container has-text-centered">
+                    <h2 className="title has-text-black has-text-centered ">Hubungi Kami</h2>
+                    <p>📍 Alamat: Jl. Kesehatan No.10, Bandung, Indonesia</p>
+                    <p>📞 Telepon: (021) 12345678</p>
+                    <p>📧 Email: info@kliniksehat.com</p>
+                </div>
+            </section>
+
+            {/* Footer */}
+            {/* Footer */}
+            <motion.footer
+                className="footer has-background-primary has-text-black has-text-centered animate__animated animate__fadeIn"
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                transition={{ duration: 1 }}
+                style={{ background: 'var(--primary-gradient)', color: 'var(--text-light)' }} /* Footer dengan gradasi */
+            >
+                <div className="content">
+                    <p>&copy; 2025 Klinik Hafizh. All rights reserved.</p>
+                </div>
+            </motion.footer>
         </div>
-      </div>
-    </section>
-  );
+    );
 };
 
 export default ReservasiPage;

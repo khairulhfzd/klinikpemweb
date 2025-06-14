@@ -12,6 +12,9 @@ const AddJanji = () => {
   const [selectedJadwalId, setSelectedJadwalId] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [selectedUserPhoto, setSelectedUserPhoto] = useState(''); // NEW STATE
+  const [selectedUserName, setSelectedUserName] = useState(''); // NEW STATE (for alt text)
+
 
   const navigate = useNavigate();
 
@@ -39,6 +42,22 @@ const AddJanji = () => {
     };
     fetchData();
   }, []);
+
+  // Update selectedUserPhoto and selectedUserName when selectedUser changes
+  useEffect(() => {
+    const user = users.find(u => u.id === parseInt(selectedUser));
+    if (user) {
+      // Pastikan URL foto lengkap jika hanya path relatif yang disimpan di DB
+      // Asumsi: foto disimpan di backend di folder 'uploads' atau 'images'
+      const photoUrl = user.foto ? `http://localhost:5000/images/${user.foto}` : '';
+      setSelectedUserPhoto(photoUrl);
+      setSelectedUserName(user.nama);
+    } else {
+      setSelectedUserPhoto('');
+      setSelectedUserName('');
+    }
+  }, [selectedUser, users]);
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -119,6 +138,32 @@ const AddJanji = () => {
               </div>
             </div>
 
+            {/* Foto Pengguna yang Dipilih (Tampilan di luar dropdown) */}
+            {selectedUserPhoto && (
+              <div className="field has-text-centered mb-4"> {/* Added margin-bottom */}
+                <figure className="image is-96x96 is-inline-block mt-2"> {/* Made slightly smaller */}
+                  <img
+                    className="is-rounded"
+                    src={selectedUserPhoto}
+                    alt={selectedUserName || "User Avatar"}
+                    onError={(e) => { // Handle broken image (fallback to placeholder)
+                      e.target.onerror = null; // Prevent infinite loop
+                      e.target.style.display = 'none'; // Hide broken image
+                      // Optionally, display a fallback text or icon instead
+                      console.log('Error loading user photo:', selectedUserPhoto);
+                    }}
+                  />
+                </figure>
+                {/* Optional: Tampilkan inisial jika foto error/tidak ada */}
+                {!selectedUserPhoto && selectedUserName && (
+                   <div style={styles.avatarPlaceholder}>
+                     {selectedUserName.charAt(0).toUpperCase()}
+                   </div>
+                )}
+              </div>
+            )}
+
+
             {/* Spesialis */}
             <div className="field">
               <label className="label">Spesialis</label>
@@ -178,7 +223,16 @@ const AddJanji = () => {
             {selectedDokter && selectedDokter.foto && (
               <div className="field has-text-centered">
                 <figure className="image is-128x128 is-inline-block mt-2">
-                  <img className="is-rounded" src={`http://localhost:5000/images/${selectedDokter.foto}`} alt={selectedDokter.nama} />
+                  <img
+                    className="is-rounded"
+                    src={`http://localhost:5000/images/${selectedDokter.foto}`}
+                    alt={selectedDokter.nama}
+                    onError={(e) => {
+                      e.target.onerror = null; // Prevent infinite loop
+                      e.target.src = 'placeholder_image_url_if_any.jpg'; // Optional: fallback image
+                      console.log('Error loading doctor photo:', `http://localhost:5000/images/${selectedDokter.foto}`);
+                    }}
+                  />
                 </figure>
               </div>
             )}
@@ -212,6 +266,23 @@ const AddJanji = () => {
       </div>
     </section>
   );
+};
+
+// Tambahkan gaya untuk placeholder avatar jika diperlukan
+const styles = {
+  avatarPlaceholder: {
+    width: '96px', // Sesuaikan dengan ukuran avatar
+    height: '96px',
+    borderRadius: '50%',
+    backgroundColor: '#D1C4E9', // Warna latar belakang placeholder
+    color: '#5E35B1', // Warna teks inisial
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    fontWeight: 'bold',
+    fontSize: '2em', // Ukuran font inisial
+    margin: '10px auto', // Pusatkan
+  },
 };
 
 export default AddJanji;

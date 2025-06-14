@@ -29,7 +29,7 @@ export const getAllJanji = async (req, res) => {
             include: [
                 {
                     model: User,
-                    attributes: ['nama', 'no_tlp']
+                    attributes: ['nama', 'no_tlp', 'foto']
                 },
                 {
                     model: Dokter,
@@ -58,7 +58,7 @@ export const getJanjiById = async (req, res) => {
             include: [
                 {
                     model: User,
-                    attributes: ['nama', 'no_tlp']
+                    attributes: ['nama', 'no_tlp', 'foto']
                 },
                 {
                     model: Dokter,

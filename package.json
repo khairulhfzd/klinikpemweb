@@ -1,6 +1,14 @@
 {
   "dependencies": {
+    "animate.css": "^4.1.1",
+    "aos": "^2.3.4",
+    "gsap": "^3.13.0",
+    "moment": "^2.30.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "react-icons": "^5.5.0",
-    "react-toastify": "^11.0.5"
+    "react-scroll": "^1.9.3",
+    "react-toastify": "^11.0.5",
+    "simple-parallax-js": "^6.2.1"
   }
 }

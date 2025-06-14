@@ -11,6 +11,11 @@ const JanjiList = () => {
   const [selectedRows, setSelectedRows] = useState([]);
   const { toggleSidebar } = useContext(SidebarContext);
 
+  // --- NEW STATES FOR MODAL ---
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [janjiToDeleteId, setJanjiToDeleteId] = useState(null);
+  // --- END NEW STATES ---
+
   useEffect(() => {
     fetchJanji();
   }, []);
@@ -19,7 +24,16 @@ const JanjiList = () => {
     try {
       setLoading(true);
       const res = await axios.get("http://localhost:5000/janji");
-      setJanji(res.data);
+      const processedJanji = res.data.map(item => {
+        if (item.user && item.user.foto && !item.user.foto.startsWith('http')) {
+          item.user.foto = `http://localhost:5000/images/${item.user.foto}`;
+        }
+        if (item.dokter && item.dokter.foto && !item.dokter.foto.startsWith('http')) {
+          item.dokter.foto = `http://localhost:5000/images/${item.dokter.foto}`;
+        }
+        return item;
+      });
+      setJanji(processedJanji);
     } catch (err) {
       console.error("Error fetching janji:", err);
       alert("Gagal memuat data janji.");
@@ -28,21 +42,36 @@ const JanjiList = () => {
     }
   };
 
-  const deleteJanji = async (id) => {
-    if (!window.confirm("Yakin ingin menghapus janji ini?")) return;
-    try {
-      await axios.delete(`http://localhost:5000/janji/${id}`);
-      fetchJanji();
-    } catch (err) {
-      console.error("Error deleting janji:", err);
-      alert("Gagal menghapus janji.");
+  // --- MODAL HANDLERS ---
+  const handleDeleteClick = (id) => {
+    setJanjiToDeleteId(id);
+    setShowDeleteModal(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (janjiToDeleteId) {
+      try {
+        await axios.delete(`http://localhost:5000/janji/${janjiToDeleteId}`);
+        fetchJanji();
+        setShowDeleteModal(false); // Close modal on success
+        setJanjiToDeleteId(null);
+      } catch (err) {
+        console.error("Error deleting janji:", err);
+        alert("Gagal menghapus janji.");
+      }
     }
   };
+
+  const handleCancelDelete = () => {
+    setShowDeleteModal(false);
+    setJanjiToDeleteId(null);
+  };
+  // --- END MODAL HANDLERS ---
 
   const updateStatus = async (id, newStatus) => {
     try {
       await axios.patch(`http://localhost:5000/janji/${id}`, { status: newStatus });
-      fetchJanji(); // Refresh data after update
+      fetchJanji();
     } catch (err) {
       console.error("Error updating status:", err);
       alert("Gagal mengupdate status janji.");
@@ -55,7 +84,6 @@ const JanjiList = () => {
 
   const filteredJanji = janji.filter(item => {
     const query = searchTerm.toLowerCase();
-
     const patientName = item.user?.nama?.toLowerCase() || '';
     const phoneNumber = item.user?.no_tlp?.toLowerCase() || '';
     const specialist = item.dokter?.spesialis?.toLowerCase() || '';
@@ -93,57 +121,57 @@ const JanjiList = () => {
     let bgColor, textColor, borderColor;
     switch (status?.toLowerCase()) {
       case 'pending':
-        bgColor = '#FFFDD0'; // Background kuning terang
-        textColor = '#B76E00'; // Teks kuning tua
-        borderColor = '#B76E00'; // Border kuning tua
+        bgColor = '#FFFDD0';
+        textColor = '#B76E00';
+        borderColor = '#B76E00';
         break;
       case 'approved':
-        bgColor = '#D4EDDA'; // Background hijau terang
-        textColor = '#28A745'; // Teks hijau tua
-        borderColor = '#28A745'; // Border hijau tua
+        bgColor = '#D4EDDA';
+        textColor = '#28A745';
+        borderColor = '#28A745';
         break;
       case 'rejected':
-        bgColor = '#F8D7DA'; // Background merah terang
-        textColor = '#DC3545'; // Teks merah tua
-        borderColor = '#DC3545'; // Border merah tua
+        bgColor = '#F8D7DA';
+        textColor = '#DC3545';
+        borderColor = '#DC3545';
         break;
       default:
-        bgColor = '#E2E6EA'; // Default abu-abu
-        textColor = '#6C757D'; // Default teks abu-abu
-        borderColor = '#6C757D'; // Default border abu-abu
+        bgColor = '#E2E6EA';
+        textColor = '#6C757D';
+        borderColor = '#6C757D';
     }
 
     return {
-      selectContainer: { // Gaya untuk div.select Bulma
+      selectContainer: {
         backgroundColor: bgColor,
         borderRadius: '5px',
         border: `1px solid ${borderColor}`,
-        boxShadow: `0 0 0 1px ${borderColor}`, // Untuk efek "glow" di border
-        overflow: 'hidden', // Penting agar border radius terlihat di select juga
+        boxShadow: `0 0 0 1px ${borderColor}`,
+        overflow: 'hidden',
       },
-      selectElement: { // Gaya untuk elemen <select> di dalamnya
+      selectElement: {
         color: textColor,
         fontWeight: 'bold',
-        backgroundColor: 'transparent', // Penting agar background dari div.select terlihat
-        border: 'none', // Hapus border default dari select
-        boxShadow: 'none', // Hapus shadow default dari select
+        backgroundColor: 'transparent',
+        border: 'none',
+        boxShadow: 'none',
         width: '100%',
         height: '100%',
-        paddingLeft: '10px', // Sesuaikan padding agar teks tidak terlalu mepet
-        paddingRight: '2.25em', // Penting agar panah Bulma terlihat
-        appearance: 'none', // Untuk konsistensi appearance dropdown di berbagai browser
+        paddingLeft: '10px',
+        paddingRight: '2.25em',
+        appearance: 'none',
         cursor: 'pointer',
       },
-      optionElement: { // Gaya untuk elemen <option>
-        color: 'black', // Opsi biasanya lebih baik terlihat dengan teks hitam
-        backgroundColor: 'white', // Pastikan latar belakang opsi jelas
+      optionElement: {
+        color: 'black',
+        backgroundColor: 'white',
       }
     };
   };
 
   return (
-    <div style={styles.container}> {/* Main container for padding and background */}
-      <div style={styles.titleWithToggle}> {/* This div now controls the layout of the button and title */}
+    <div style={styles.container}>
+      <div style={styles.titleWithToggle}>
         <button
           onClick={toggleSidebar}
           style={styles.toggleButton}
@@ -207,6 +235,8 @@ const JanjiList = () => {
               ) : (
                 filteredJanji.map((item) => {
                   const dropdownStyles = getDropdownStyle(item.status);
+                  const userPhotoUrl = item.user?.foto;
+                  const userInitial = item.user?.nama ? item.user.nama.charAt(0).toUpperCase() : 'U';
 
                   return (
                     <tr
@@ -222,9 +252,27 @@ const JanjiList = () => {
                       </td>
                       <td style={styles.tableCell}>
                         <div style={styles.avatarCell}>
-                          <div style={styles.avatarPlaceholder}>
-                            {item.user?.nama ? item.user.nama.charAt(0).toUpperCase() : 'U'}
-                          </div>
+                          {userPhotoUrl ? (
+                            <img
+                              src={userPhotoUrl}
+                              alt={item.user?.nama || 'User Avatar'}
+                              style={styles.avatarImage}
+                              onError={(e) => {
+                                e.target.onerror = null;
+                                e.target.style.display = 'none';
+                                const fallbackDiv = document.createElement('div');
+                                fallbackDiv.textContent = userInitial;
+                                Object.assign(fallbackDiv.style, styles.avatarPlaceholder);
+                                if (e.target.parentNode) { // Pastikan parentNode ada
+                                    e.target.parentNode.insertBefore(fallbackDiv, e.target.nextSibling);
+                                }
+                              }}
+                            />
+                          ) : (
+                            <div style={styles.avatarPlaceholder}>
+                              {userInitial}
+                            </div>
+                          )}
                           {item.user?.nama || 'N/A'}
                         </div>
                       </td>
@@ -234,7 +282,6 @@ const JanjiList = () => {
                       <td style={styles.tableCell}>
                         {item.jadwal ? `${item.jadwal.hari} (${item.jadwal.waktu})` : 'N/A'}
                       </td>
-                      {/* Selalu tampilkan dropdown Bulma */}
                       <td style={styles.tableCell}>
                         <div className="select is-small is-rounded" style={dropdownStyles.selectContainer}>
                           <select
@@ -259,7 +306,8 @@ const JanjiList = () => {
                           <FaEdit size={14} />
                         </Link>
                         <button
-                          onClick={() => deleteJanji(item.id)}
+                          // OLD: onClick={() => deleteJanji(item.id)}
+                          onClick={() => handleDeleteClick(item.id)} // NEW: Use modal handler
                           style={{ ...styles.actionButtonSmall, ...styles.deleteButton }}
                           title="Hapus"
                         >
@@ -274,11 +322,34 @@ const JanjiList = () => {
           </table>
         </div>
       )}
+
+      {/* --- DELETE CONFIRMATION MODAL --- */}
+      {showDeleteModal && (
+        <div style={styles.modalOverlay}>
+          <div style={styles.modalBox}>
+            <p style={styles.modalText}>Yakin ingin menghapus janji ini?</p>
+            <div style={styles.modalButtons}>
+              <button
+                onClick={handleConfirmDelete}
+                style={styles.modalConfirmButton}
+              >
+                Ya, Hapus!
+              </button>
+              <button
+                onClick={handleCancelDelete}
+                style={styles.modalCancelButton}
+              >
+                Batal
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* --- END DELETE CONFIRMATION MODAL --- */}
     </div>
   );
 };
 
-// Define inline styles as a JavaScript object
 const styles = {
   container: {
     padding: '20px',
@@ -286,17 +357,16 @@ const styles = {
     minHeight: '100vh',
     fontFamily: 'Roboto, Arial, sans-serif',
   },
-  titleWithToggle: { // NEW STYLE FOR ALIGNMENT
+  titleWithToggle: {
     display: 'flex',
-    alignItems: 'center', // Align items vertically in the middle
-    gap: '10px', // Add some space between the button and the title
+    alignItems: 'center',
+    gap: '10px',
     marginBottom: '20px',
   },
   pageTitle: {
     fontSize: '1.8em',
     fontWeight: '600',
     color: '#333',
-    // marginBottom: '20px', // Removed from here as it's now handled by titleWithToggle
     textAlign: 'left',
   },
   headerContainer: {
@@ -330,8 +400,6 @@ const styles = {
     fontSize: '0.95em',
     width: '280px',
     transition: 'border-color 0.2s ease, box-shadow 0.2s ease',
-    // Pseudo-class ':focus' tidak bekerja langsung dengan inline style.
-    // Gunakan CSS Modules atau library CSS-in-JS jika perlu.
   },
   searchIcon: {
     position: 'absolute',
@@ -352,7 +420,6 @@ const styles = {
     alignItems: 'center',
     boxShadow: '0 4px 8px rgba(106, 27, 154, 0.2)',
     transition: 'background-color 0.2s ease',
-    // Pseudo-class ':hover' tidak bekerja langsung dengan inline style.
   },
   loadingProgress: {
     textAlign: 'center',
@@ -405,7 +472,6 @@ const styles = {
     transition: 'background-color 0.2s ease, box-shadow 0.2s ease',
     cursor: 'pointer',
     height: '70px',
-    // Pseudo-class ':hover' tidak bekerja langsung dengan inline style.
   },
   selectedTableRow: {
     backgroundColor: '#FFFBE6',
@@ -431,6 +497,14 @@ const styles = {
   avatarCell: {
     display: 'flex',
     alignItems: 'center',
+    gap: '10px',
+  },
+  avatarImage: {
+    width: '36px',
+    height: '36px',
+    borderRadius: '50%',
+    objectFit: 'cover',
+    flexShrink: 0,
   },
   avatarPlaceholder: {
     width: '36px',
@@ -443,7 +517,6 @@ const styles = {
     alignItems: 'center',
     fontWeight: 'bold',
     fontSize: '1.1em',
-    marginRight: '10px',
     flexShrink: 0,
   },
   noDataRow: {
@@ -473,14 +546,11 @@ const styles = {
     width: '32px',
     height: '32px',
     textDecoration: 'none',
-    // Pseudo-class ':hover' tidak bekerja langsung dengan inline style.
   },
   deleteButton: {
     backgroundColor: '#FFEBEE',
     color: '#EF5350',
-    // Pseudo-class ':hover' tidak bekerja langsung dengan inline style.
   },
-  // headerBar is no longer used directly in JSX, but kept for reference if needed
   headerBar: {
     display: 'flex',
     alignItems: 'center',
@@ -493,6 +563,77 @@ const styles = {
     border: 'none',
     cursor: 'pointer',
     color: '#333',
+  },
+
+  // --- NEW STYLES FOR MODAL ---
+  modalOverlay: {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: '100%',
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 1000,
+    animation: 'fadeIn 0.3s forwards', // Fade-in effect
+  },
+  modalBox: {
+    backgroundColor: '#fff',
+    borderRadius: '12px',
+    padding: '30px',
+    textAlign: 'center',
+    boxShadow: '0 10px 30px rgba(0, 0, 0, 0.2)',
+    maxWidth: '400px',
+    width: '90%',
+    transform: 'scale(0.9)', // Initial scale for pop-in effect
+    animation: 'scaleIn 0.3s forwards', // Scale-in effect
+    border: '2px solid #6A1B9A', // Border color matching theme
+    position: 'relative', // Needed for pseudo-elements or specific z-index
+  },
+  modalText: {
+    fontSize: '1.2em',
+    marginBottom: '25px',
+    color: '#333',
+    fontWeight: '500',
+  },
+  modalButtons: {
+    display: 'flex',
+    justifyContent: 'center',
+    gap: '15px',
+  },
+  modalConfirmButton: {
+    backgroundColor: '#DC3545', // Merah untuk konfirmasi hapus
+    color: '#fff',
+    border: 'none',
+    borderRadius: '8px',
+    padding: '10px 25px',
+    fontSize: '1em',
+    fontWeight: 'bold',
+    cursor: 'pointer',
+    transition: 'background-color 0.2s ease, transform 0.1s ease',
+    boxShadow: '0 4px 8px rgba(220, 53, 69, 0.2)',
+    '&:hover': { // This is pseudo-class, won't work with inline style directly.
+      backgroundColor: '#C82333',
+      transform: 'translateY(-2px)',
+    },
+  },
+  modalCancelButton: {
+    backgroundColor: '#6C757D', // Abu-abu untuk batal
+    color: '#fff',
+    border: 'none',
+    borderRadius: '8px',
+    padding: '10px 25px',
+    fontSize: '1em',
+    fontWeight: 'bold',
+    cursor: 'pointer',
+    transition: 'background-color 0.2s ease, transform 0.1s ease',
+    boxShadow: '0 4px 8px rgba(108, 117, 125, 0.2)',
+    '&:hover': { // This is pseudo-class, won't work with inline style directly.
+      backgroundColor: '#5A6268',
+      transform: 'translateY(-2px)',
+    },
   },
 };
 

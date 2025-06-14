@@ -1,4 +1,143 @@
-.custom-navbar {
-  background-color: #001eff !important; /* warna custom */
-  color: white;
+/* --- Tambahkan kode @keyframes ini di bawahnya --- */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
+
+@keyframes scaleIn {
+  from { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+/* --- Akhir penambahan --- */
+
+@keyframes fadeSlideIn {
+  0% {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+:root {
+  --primary: #007BFF;
+  --primary-light: #00d4ff;
+  --text-dark: #212529;
+  --text-light: #6c757d;
+  --bg-light: #f9f9f9;
+  --bg-white: #ffffff;
+  --section-padding: 4rem;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: var(--bg-white);
+  color: var(--text-dark);
+}
+
+/* Navbar */
+.custom-navbar {
+  background-color: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  padding: 0.3rem 2rem;
+  position: sticky;
+  top: 0;
+  z-index: 999;
+}
+
+.navbar-item {
+  color: var(--text-dark);
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  transition: color 0.3s ease;
+} 
+
+.navbar-item:hover {
+  background-color: transparent !important;
+  color: #1fa2ff !important;
+}
+
+
+.navbar-brand strong {
+  font-size: 1.3rem;
+  color: var(--text-dark);
+}
+
+/* Hero Section */
+#hero-section {
+  background: linear-gradient(120deg, var(--primary), var(--primary-light));
+  clip-path: polygon(0 0, 100% 0, 100% 87%, 0 100%);
+  color: white;
+  padding: var(--section-padding) 1.5rem 6rem;
+}
+
+#hero-section .title {
+  margin-bottom: 1rem;
+}
+
+#hero-section .button {
+  font-weight: 600;
+  border-radius: 6px;
+}
+
+/* General Section Styling */
+.section {
+  padding: var(--section-padding) 1.5rem;
+}
+
+/* Dokter & Services */
+.box {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border-radius: 10px;
+  background-color: white;
+  box-shadow: 0 4px 10px rgba(0, 123, 255, 0.06);
+}
+
+.box:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 8px 20px rgba(0, 123, 255, 0.1);
+}
+
+#dokter,
+#services {
+  background-color: var(--bg-light);
+}
+
+/* Icons */
+.icon {
+  color: var(--primary);
+}
+
+/* Button */
+.button.is-primary {
+  background-color: var(--primary);
+  color: white;
+  border: none;
+  transition: background 0.3s ease;
+}
+
+.button.is-primary:hover {
+  background-color: #0056b3;
+}
+
+/* Footer */
+.footer {
+  background-color: var(--primary);
+  color: white;
+  padding: 2rem 1rem;
+}
+
+@keyframes pulseSoft {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.pulse-soft {
+  animation: pulseSoft 2s infinite;
+}
+
