@@ -1,21 +1,14 @@
 import React, { useEffect } from 'react';
-import '../reservasi.css'; // Pastikan ini mengimpor file CSS yang sudah diperbarui
+import '../reservasi.css';
 import { motion } from 'framer-motion';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import 'animate.css';
 
-// Inisialisasi AOS di luar komponen untuk memastikan hanya sekali
 AOS.init();
 
 const ReservasiPage = () => {
-    // Gunakan useEffect untuk inisialisasi AOS jika diperlukan,
-    // atau untuk efek samping lainnya yang hanya berjalan sekali.
-    useEffect(() => {
-        // Jika Anda memiliki elemen yang dimuat secara dinamis setelah render awal,
-        // AOS.refresh() dapat dipanggil di sini.
-        // AOS.refresh();
-    }, []);
+    useEffect(() => {}, []);
 
     return (
         <div className="reservation-container">
@@ -23,6 +16,13 @@ const ReservasiPage = () => {
             <div className="reservation-hero" data-aos="fade-down" data-aos-duration="1000">
                 <h1 className="animate__animated animate__fadeInDown">TABLE RESERVATION</h1>
                 <p className="breadcrumb">Home / Booking</p>
+            </div>
+
+            {/* Tombol kembali ke Landing Page */}
+            <div className="has-text-centered" style={{ margin: '20px 0' }}>
+                <a href="/" className="button is-primary is-medium animate__animated animate__fadeInUp">
+                    ← Kembali ke Landing Page
+                </a>
             </div>
 
             {/* Form Reservasi */}
@@ -58,8 +58,6 @@ const ReservasiPage = () => {
                 </form>
             </motion.div>
 
-            {/* --- Bagian Konten dari LandingPage (Daftar Dokter, Tentang Kami, Layanan, Kontak) --- */}
-
             {/* Daftar Dokter */}
             <section id="dokter" className="section has-background-light">
                 <h2 className="title has-text-black has-text-centered mb-6" data-aos="fade-up">Daftar Dokter</h2>
@@ -71,7 +69,6 @@ const ReservasiPage = () => {
                     ].map((item, i) => (
                         <div key={i} className="column is-one-third" data-aos="zoom-in" data-aos-delay={i * 300}>
                             <div className="box has-text-centered">
-                                {/* Mengurangi ukuran gambar dokter */}
                                 <img src={item.img} alt={item.title} style={{ width: '200px', height: 'auto' }} />
                                 <h3 className="subtitle is-5 has-text-black">{item.title}</h3>
                                 <p>{item.desc}</p>
@@ -133,7 +130,6 @@ const ReservasiPage = () => {
                             </div>
                         ))}
                     </div>
-                    {/* Tombol "Reservasi Online" Dihapus dari sini */}
                 </div>
             </section>
 
@@ -148,13 +144,12 @@ const ReservasiPage = () => {
             </section>
 
             {/* Footer */}
-            {/* Footer */}
             <motion.footer
                 className="footer has-background-primary has-text-black has-text-centered animate__animated animate__fadeIn"
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
                 transition={{ duration: 1 }}
-                style={{ background: 'var(--primary-gradient)', color: 'var(--text-light)' }} /* Footer dengan gradasi */
+                style={{ background: 'var(--primary-gradient)', color: 'var(--text-light)' }}
             >
                 <div className="content">
                     <p>&copy; 2025 Klinik Hafizh. All rights reserved.</p>

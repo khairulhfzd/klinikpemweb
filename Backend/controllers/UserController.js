@@ -1,13 +1,16 @@
 import User from "../models/UserModel.js";
+import bcrypt from "bcrypt";
 
 // GET semua user
 export const getUsers = async (req, res) => {
   try {
-    const response = await User.findAll();
+    const response = await User.findAll({
+      attributes: ['id', 'nama', 'email', 'gender', 'alamat', 'no_tlp', 'role', 'foto']
+    });
     res.status(200).json(response);
   } catch (error) {
-    console.log(error.message);
-    res.status(500).json({ msg: "Gagal mengambil data user" });
+    console.error(error);
+    res.status(500).json({ msg: "Gagal mengambil data user." });
   }
 };
 
@@ -16,81 +19,124 @@ export const getUserById = async (req, res) => {
   try {
     const response = await User.findOne({
       where: { id: req.params.id },
+      attributes: ['id', 'nama', 'email', 'gender', 'alamat', 'no_tlp', 'role', 'foto']
     });
     if (!response) {
-      return res.status(404).json({ msg: "User tidak ditemukan" });
+      return res.status(404).json({ msg: "User tidak ditemukan." });
     }
     res.status(200).json(response);
   } catch (error) {
-    console.log(error.message);
-    res.status(500).json({ msg: "Gagal mengambil data user" });
+    console.error(error);
+    res.status(500).json({ msg: "Gagal mengambil data user." });
   }
 };
 
-// POST user baru (dengan upload foto)
+// POST user baru (Registrasi)
 export const createUser = async (req, res) => {
-  const { nama, email, password, gender, alamat, no_tlp } = req.body;
-  const foto = req.file ? req.file.filename : null;
+  const {
+    nama,
+    email,
+    password,
+    gender = null,
+    alamat = null,
+    no_tlp = null,
+    role = "user"
+  } = req.body;
+
+  let foto = null;
+  if (req.file && req.file.filename) {
+    foto = req.file.filename;
+  }
 
   try {
+    if (!nama || !email || !password) {
+      return res.status(400).json({ msg: "Nama, email, dan password wajib diisi." });
+    }
+
+    const existingUser = await User.findOne({ where: { email } });
+    if (existingUser) {
+      return res.status(400).json({ msg: "Email sudah digunakan." });
+    }
+
+    const salt = await bcrypt.genSalt();
+    const hashPassword = await bcrypt.hash(password, salt);
+
     await User.create({
       nama,
       email,
-      password,
+      password: hashPassword,
       gender,
       alamat,
       no_tlp,
-      foto,
+      role,
+      foto
     });
-    res.status(201).json({ msg: "User berhasil dibuat" });
+
+    res.status(201).json({ msg: "User berhasil dibuat." });
   } catch (error) {
-    console.log(error.message);
-    res.status(500).json({ msg: "Gagal membuat user" });
+    console.error(error);
+    res.status(500).json({ msg: "Gagal membuat user." });
   }
 };
 
-// PUT update user (dengan update foto jika dikirim)
+// UPDATE user
 export const updateUser = async (req, res) => {
-  const { nama, email, password, gender, alamat, no_tlp } = req.body;
-
-  const user = await User.findOne({ where: { id: req.params.id } });
-  if (!user) return res.status(404).json({ msg: "User tidak ditemukan" });
-
-  let foto = user.foto;
-  if (req.file) {
-    foto = req.file.filename;
-    // TODO: Hapus file lama jika perlu
-  }
+  const {
+    nama,
+    email,
+    password,
+    gender,
+    alamat,
+    no_tlp,
+    role
+  } = req.body;
 
   try {
+    const user = await User.findOne({ where: { id: req.params.id } });
+    if (!user) return res.status(404).json({ msg: "User tidak ditemukan." });
+
+    let foto = user.foto;
+    if (req.file?.filename) {
+      foto = req.file.filename;
+    }
+
+    let hashPassword = user.password;
+    if (password) {
+      const salt = await bcrypt.genSalt();
+      hashPassword = await bcrypt.hash(password, salt);
+    }
+
     await User.update(
       {
-        nama,
-        email,
-        password,
-        gender,
-        alamat,
-        no_tlp,
-        foto,
+        nama: nama ?? user.nama,
+        email: email ?? user.email,
+        password: hashPassword,
+        gender: gender ?? user.gender,
+        alamat: alamat ?? user.alamat,
+        no_tlp: no_tlp ?? user.no_tlp,
+        role: role ?? user.role,
+        foto
       },
       { where: { id: req.params.id } }
     );
-    res.status(200).json({ msg: "User berhasil diperbarui" });
+
+    res.status(200).json({ msg: "User berhasil diperbarui." });
   } catch (error) {
-    console.log(error.message);
-    res.status(500).json({ msg: "Gagal memperbarui user" });
+    console.error(error);
+    res.status(500).json({ msg: "Gagal memperbarui user." });
   }
 };
 
 // DELETE user
 export const deleteUser = async (req, res) => {
   try {
-    await User.destroy({
-      where: { id: req.params.id },
-    });
-    res.status(200).json({ msg: "User berhasil dihapus" });
+    const user = await User.findOne({ where: { id: req.params.id } });
+    if (!user) return res.status(404).json({ msg: "User tidak ditemukan." });
+
+    await User.destroy({ where: { id: req.params.id } });
+    res.status(200).json({ msg: "User berhasil dihapus." });
   } catch (error) {
-    console.log(error.message);
-    res.status(500).json({ msg: "Gagal menghapus user" });
+    console.error(error);
+    res.status(500).json({ msg: "Gagal menghapus user." });
   }
 };

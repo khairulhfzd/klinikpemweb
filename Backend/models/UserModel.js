@@ -9,7 +9,12 @@ const User = db.define('users',{
     gender:DataTypes.STRING,
     alamat:DataTypes.STRING,
     no_tlp:DataTypes.STRING,
-    // Add the 'foto' column here, making it nullable
+    role: {
+        type: DataTypes.ENUM,
+        values: ['admin', 'user'],
+        defaultValue: 'user'
+    },
+
     foto: {
         type: DataTypes.STRING, // Or DataTypes.BLOB if you plan to store binary data directly
         allowNull: true // This makes the column optional

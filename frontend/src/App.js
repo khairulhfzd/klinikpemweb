@@ -18,30 +18,50 @@ import JanjiList from './components/janji/JanjiList';
 import AddJanji from './components/janji/AddJanji';
 import EditJanji from './components/janji/EditJanji';
 
+import ProtectedRoute from './components/ProtectedRoute';
+
 function App() {
   return (
     <Router>
       <Routes>
+
+        {/* Landing Page */}
         <Route path="/" element={<LandingPage />} />
+
+        {/* Login */}
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/reservasi" element={<ReservasiPage />} />
 
-        {/* Nested route untuk dashboard */}
-        <Route path="/admin" element={<AdminDashboard />}>
+        {/* Reservasi (hanya user) */}
+        <Route 
+          path="/reservasi" 
+          element={
+            <ProtectedRoute>
+              <ReservasiPage />
+            </ProtectedRoute>
+          } 
+        />
+
+        {/* Admin Panel (hanya admin) */}
+        <Route 
+          path="/admin" 
+          element={
+            <ProtectedRoute>
+              <AdminDashboard />
+            </ProtectedRoute>
+          }
+        >
           <Route index element={<DashboardContent />} />
-
           <Route path="dokter" element={<DokterList />} />
           <Route path="dokter/add" element={<AddDokter />} />
           <Route path="dokter/edit/:id" element={<EditDokter />} />
-
           <Route path="user" element={<UserList />} />
           <Route path="user/add" element={<AddUser />} />
           <Route path="user/edit/:id" element={<EditUser />} />
-
           <Route path="janji" element={<JanjiList />} />
           <Route path="janji/add" element={<AddJanji />} />
           <Route path="janji/edit/:id" element={<EditJanji />} />
         </Route>
+
       </Routes>
     </Router>
   );
