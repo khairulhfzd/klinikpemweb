@@ -31,6 +31,12 @@ const Janji = db.define("janji", {
             key: "id"
         }
     },
+
+    tanggal: {
+        type: DataTypes.DATEONLY, // Tambahkan ini
+        allowNull: false
+    },
+
     status: {
         type: DataTypes.STRING,
         defaultValue: "pending"

@@ -10,11 +10,11 @@ const AddJanji = () => {
   const [selectedSpesialis, setSelectedSpesialis] = useState('');
   const [selectedDokterId, setSelectedDokterId] = useState('');
   const [selectedJadwalId, setSelectedJadwalId] = useState('');
+  const [selectedTanggal, setSelectedTanggal] = useState(''); // NEW STATE FOR DATE
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [selectedUserPhoto, setSelectedUserPhoto] = useState(''); // NEW STATE
-  const [selectedUserName, setSelectedUserName] = useState(''); // NEW STATE (for alt text)
-
+  const [selectedUserPhoto, setSelectedUserPhoto] = useState('');
+  const [selectedUserName, setSelectedUserName] = useState('');
 
   const navigate = useNavigate();
 
@@ -47,10 +47,8 @@ const AddJanji = () => {
   useEffect(() => {
     const user = users.find(u => u.id === parseInt(selectedUser));
     if (user) {
-      // Pastikan URL foto lengkap jika hanya path relatif yang disimpan di DB
-      // Asumsi: foto disimpan di backend di folder 'uploads' atau 'images'
-      const photoUrl = user.foto ? `http://localhost:5000/images/${user.foto}` : '';
-      setSelectedUserPhoto(photoUrl);
+      const photoUrl = user.foto ? `http ://localhost:5000/images/${user.foto}` : '';
+        setSelectedUserPhoto(photoUrl);
       setSelectedUserName(user.nama);
     } else {
       setSelectedUserPhoto('');
@@ -62,8 +60,8 @@ const AddJanji = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!selectedUser || !selectedDokterId || !selectedJadwalId) {
-      alert("Mohon lengkapi semua pilihan (Pengguna, Dokter, Jadwal) sebelum submit.");
+    if (!selectedUser || !selectedDokterId || !selectedJadwalId || !selectedTanggal) { // Added selectedTanggal
+      alert("Mohon lengkapi semua pilihan (Pengguna, Dokter, Jadwal, Tanggal) sebelum submit.");
       return;
     }
 
@@ -72,6 +70,7 @@ const AddJanji = () => {
         userId: selectedUser,
         dokterId: selectedDokterId,
         jadwalId: selectedJadwalId,
+        tanggal: selectedTanggal, // NEW: Include selectedTanggal
         status: 'pending',
       });
 
@@ -140,29 +139,26 @@ const AddJanji = () => {
 
             {/* Foto Pengguna yang Dipilih (Tampilan di luar dropdown) */}
             {selectedUserPhoto && (
-              <div className="field has-text-centered mb-4"> {/* Added margin-bottom */}
-                <figure className="image is-96x96 is-inline-block mt-2"> {/* Made slightly smaller */}
+              <div className="field has-text-centered mb-4">
+                <figure className="image is-96x96 is-inline-block mt-2">
                   <img
                     className="is-rounded"
                     src={selectedUserPhoto}
                     alt={selectedUserName || "User Avatar"}
-                    onError={(e) => { // Handle broken image (fallback to placeholder)
-                      e.target.onerror = null; // Prevent infinite loop
-                      e.target.style.display = 'none'; // Hide broken image
-                      // Optionally, display a fallback text or icon instead
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.style.display = 'none';
                       console.log('Error loading user photo:', selectedUserPhoto);
                     }}
                   />
                 </figure>
-                {/* Optional: Tampilkan inisial jika foto error/tidak ada */}
                 {!selectedUserPhoto && selectedUserName && (
-                   <div style={styles.avatarPlaceholder}>
-                     {selectedUserName.charAt(0).toUpperCase()}
-                   </div>
+                  <div style={styles.avatarPlaceholder}>
+                    {selectedUserName.charAt(0).toUpperCase()}
+                  </div>
                 )}
               </div>
             )}
-
 
             {/* Spesialis */}
             <div className="field">
@@ -226,13 +222,12 @@ const AddJanji = () => {
                   <img
                     className="is-rounded"
                     src={`http://localhost:5000/images/${selectedDokter.foto}`}
-                    alt={selectedDokter.nama}
-                    onError={(e) => {
-                      e.target.onerror = null; // Prevent infinite loop
-                      e.target.src = 'placeholder_image_url_if_any.jpg'; // Optional: fallback image
-                      console.log('Error loading doctor photo:', `http://localhost:5000/images/${selectedDokter.foto}`);
-                    }}
-                  />
+                  alt={selectedDokter.nama}
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = 'placeholder_image_url_if_any.jpg';
+                    console.log('Error loading doctor photo:', `http://localhost:5000/images/${selectedDokter.foto}`);
+                    }}/>
                 </figure>
               </div>
             )}
@@ -256,6 +251,21 @@ const AddJanji = () => {
               </div>
             </div>
 
+            {/* NEW: Tanggal */}
+            <div className="field">
+              <label className="label">Tanggal Janji Temu</label>
+              <div className="control">
+                <input
+                  className="input is-info"
+                  type="date"
+                  value={selectedTanggal}
+                  onChange={(e) => setSelectedTanggal(e.target.value)}
+                  min={new Date().toISOString().split('T')[0]} // Optional: set min date to today
+                  required
+                />
+              </div>
+            </div>
+
             <div className="field has-text-centered mt-5">
               <button className="button is-link is-medium" type="submit">
                 Kirim Reservasi
@@ -271,17 +281,17 @@ const AddJanji = () => {
 // Tambahkan gaya untuk placeholder avatar jika diperlukan
 const styles = {
   avatarPlaceholder: {
-    width: '96px', // Sesuaikan dengan ukuran avatar
+    width: '96px',
     height: '96px',
     borderRadius: '50%',
-    backgroundColor: '#D1C4E9', // Warna latar belakang placeholder
-    color: '#5E35B1', // Warna teks inisial
+    backgroundColor: '#D1C4E9',
+    color: '#5E35B1',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
     fontWeight: 'bold',
-    fontSize: '2em', // Ukuran font inisial
-    margin: '10px auto', // Pusatkan
+    fontSize: '2em',
+    margin: '10px auto',
   },
 };
 

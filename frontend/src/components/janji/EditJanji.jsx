@@ -10,13 +10,20 @@ const EditJanji = () => {
   const [selectedSpesialis, setSelectedSpesialis] = useState('');
   const [selectedDokterId, setSelectedDokterId] = useState('');
   const [selectedJadwalId, setSelectedJadwalId] = useState('');
+  const [selectedTanggal, setSelectedTanggal] = useState(''); // NEW STATE FOR DATE
   const [status, setStatus] = useState('pending');
+  const [loading, setLoading] = useState(true); // Added loading state for initial fetch
+  const [error, setError] = useState(null); // Added error state for initial fetch
+
 
   const navigate = useNavigate();
   const { id } = useParams();
 
   const fetchData = useCallback(async () => {
     try {
+      setLoading(true); // Set loading true when fetching starts
+      setError(null);
+
       const [usersRes, doktersRes, jadwalRes, janjiRes] = await Promise.all([
         axios.get('http://localhost:5000/users'),
         axios.get('http://localhost:5000/dokters'),
@@ -28,9 +35,12 @@ const EditJanji = () => {
       setUsers(usersRes.data);
       setDokters(doktersRes.data);
       setJadwalList(jadwalRes.data);
+
+      // Set initial state values from fetched janji data
       setSelectedUser(janji.userId);
       setSelectedDokterId(janji.dokterId);
       setSelectedJadwalId(janji.jadwalId);
+      setSelectedTanggal(janji.tanggal); // NEW: Set existing tanggal
       setStatus(janji.status);
 
       // Auto-pilih spesialis berdasarkan dokter
@@ -41,7 +51,9 @@ const EditJanji = () => {
 
     } catch (err) {
       console.error('Gagal memuat data:', err);
-      alert('Gagal memuat data janji atau data lain.');
+      setError("Gagal memuat data janji atau data lain. Pastikan ID janji valid dan server backend berjalan.");
+    } finally {
+      setLoading(false); // Set loading false after fetch completes
     }
   }, [id]);
 
@@ -51,30 +63,65 @@ const EditJanji = () => {
 
   const handleUpdate = async (e) => {
     e.preventDefault();
+
+    if (!selectedUser || !selectedDokterId || !selectedJadwalId || !selectedTanggal) { // Added selectedTanggal validation
+      alert("Mohon lengkapi semua pilihan (Pengguna, Dokter, Jadwal, Tanggal) sebelum menyimpan.");
+      return;
+    }
+
     try {
       await axios.patch(`http://localhost:5000/janji/${id}`, {
         userId: selectedUser,
         dokterId: selectedDokterId,
         jadwalId: selectedJadwalId,
+        tanggal: selectedTanggal, // NEW: Include selectedTanggal in update payload
         status,
       });
       alert("Janji berhasil diperbarui.");
       navigate("/admin/janji");
     } catch (err) {
       console.error("Gagal update janji:", err.response?.data || err.message);
-      alert("Terjadi kesalahan saat mengupdate janji.");
+      alert("Terjadi kesalahan saat mengupdate janji. Silakan coba lagi.");
     }
   };
 
   const selectedDokter = dokters.find(d => d.id === parseInt(selectedDokterId));
 
+  // Loading and Error states
+  if (loading) {
+    return (
+      <section className="hero is-fullheight is-info is-bold">
+        <div className="hero-body">
+          <div className="container has-text-centered">
+            <p className="title">Memuat data...</p>
+            <progress className="progress is-small is-primary" max="100"></progress>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (error) {
+    return (
+      <section className="hero is-fullheight is-danger is-bold">
+        <div className="hero-body">
+          <div className="container has-text-centered">
+            <p className="title">Terjadi Kesalahan</p>
+            <p className="subtitle">{error}</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   return (
-    <section className="section">
+    <section className="section" style={{ background: 'linear-gradient(135deg, #e3f2fd, #bbdefb)', paddingTop: '3rem' }}>
       <div className="container" style={{ maxWidth: '700px' }}>
-        <div className="box">
-          <h2 className="title has-text-centered has-text-link">Edit Janji Temu</h2>
+        <div className="box" style={{ borderRadius: '12px' }}>
+          <h2 className="title has-text-centered has-text-link mb-5">Edit Janji Temu</h2>
 
           <form onSubmit={handleUpdate}>
+            {/* User */}
             <div className="field">
               <label className="label">Nama Pengguna</label>
               <div className="select is-fullwidth is-info">
@@ -89,6 +136,7 @@ const EditJanji = () => {
               </div>
             </div>
 
+            {/* Spesialis */}
             <div className="field">
               <label className="label">Spesialis</label>
               <div className="select is-fullwidth is-info">
@@ -109,6 +157,7 @@ const EditJanji = () => {
               </div>
             </div>
 
+            {/* Dokter */}
             <div className="field">
               <label className="label">Dokter</label>
               <div className="select is-fullwidth is-info">
@@ -124,12 +173,22 @@ const EditJanji = () => {
             {selectedDokter?.foto && (
               <div className="field has-text-centered">
                 <figure className="image is-128x128 is-inline-block mt-2">
-                  <img className="is-rounded" src={`http://localhost:5000/images/${selectedDokter.foto}`} alt={selectedDokter.nama} />
+                  <img
+                    className="is-rounded"
+                    src={`http://localhost:5000/images/${selectedDokter.foto}`}
+                    alt={selectedDokter.nama}
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = 'placeholder_image_url_if_any.jpg'; // Fallback image
+                      console.log('Error loading doctor photo:', `http://localhost:5000/images/${selectedDokter.foto}`);
+                    }}
+                  />
                 </figure>
                 <p className="has-text-weight-semibold mt-2">{selectedDokter.nama}</p>
               </div>
             )}
 
+            {/* Jadwal */}
             <div className="field">
               <label className="label">Jadwal</label>
               <div className="select is-fullwidth is-info">
@@ -142,6 +201,21 @@ const EditJanji = () => {
               </div>
             </div>
 
+            {/* NEW: Tanggal */}
+            <div className="field">
+              <label className="label">Tanggal Janji Temu</label>
+              <div className="control">
+                <input
+                  className="input is-info"
+                  type="date"
+                  value={selectedTanggal}
+                  onChange={(e) => setSelectedTanggal(e.target.value)}
+                  required
+                />
+              </div>
+            </div>
+
+            {/* Status */}
             <div className="field">
               <label className="label">Status</label>
               <div className="select is-fullwidth">

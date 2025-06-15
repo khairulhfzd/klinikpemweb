@@ -86,18 +86,20 @@ const JanjiList = () => {
     const query = searchTerm.toLowerCase();
     const patientName = item.user?.nama?.toLowerCase() || '';
     const phoneNumber = item.user?.no_tlp?.toLowerCase() || '';
-    const specialist = item.dokter?.spesialis?.toLowerCase() || '';
+    const spesialis = item.dokter?.spesialis?.toLowerCase() || '';
     const doctorName = item.dokter?.nama?.toLowerCase() || '';
     const schedule = item.jadwal ? `${item.jadwal.hari} ${item.jadwal.waktu}`.toLowerCase() : '';
     const status = item.status?.toLowerCase() || '';
+    const tanggal = item.tanggal ? new Date(item.tanggal).toLocaleDateString('id-ID').toLowerCase() : ''; // Add tanggal to search filter
 
     return (
       patientName.includes(query) ||
       phoneNumber.includes(query) ||
-      specialist.includes(query) ||
+      spesialis.includes(query) ||
       doctorName.includes(query) ||
       schedule.includes(query) ||
-      status.includes(query)
+      status.includes(query) ||
+      tanggal.includes(query) // Include tanggal in search
     );
   });
 
@@ -219,6 +221,7 @@ const JanjiList = () => {
                 <th style={styles.tableHeaderCell}>Spesialis</th>
                 <th style={styles.tableHeaderCell}>Nama Dokter</th>
                 <th style={styles.tableHeaderCell}>Jadwal</th>
+                <th style={styles.tableHeaderCell}>Tanggal</th> {/* NEW: Tanggal Header */}
                 <th style={styles.tableHeaderCell}>Status</th>
                 <th style={styles.tableHeaderCell}>Dibuat</th>
                 <th style={styles.tableHeaderCell}>Diperbarui</th>
@@ -228,7 +231,7 @@ const JanjiList = () => {
             <tbody>
               {filteredJanji.length === 0 ? (
                 <tr>
-                  <td colSpan="10" style={styles.noDataRow}>
+                  <td colSpan="11" style={styles.noDataRow}> {/* Changed colspan to 11 */}
                     Tidak ada data Janji Temu.
                   </td>
                 </tr>
@@ -263,8 +266,8 @@ const JanjiList = () => {
                                 const fallbackDiv = document.createElement('div');
                                 fallbackDiv.textContent = userInitial;
                                 Object.assign(fallbackDiv.style, styles.avatarPlaceholder);
-                                if (e.target.parentNode) { // Pastikan parentNode ada
-                                    e.target.parentNode.insertBefore(fallbackDiv, e.target.nextSibling);
+                                if (e.target.parentNode) {
+                                      e.target.parentNode.insertBefore(fallbackDiv, e.target.nextSibling);
                                 }
                               }}
                             />
@@ -281,6 +284,9 @@ const JanjiList = () => {
                       <td style={styles.tableCell}>{item.dokter?.nama || 'N/A'}</td>
                       <td style={styles.tableCell}>
                         {item.jadwal ? `${item.jadwal.hari} (${item.jadwal.waktu})` : 'N/A'}
+                      </td>
+                      <td style={styles.tableCell}>
+                        {item.tanggal ? new Date(item.tanggal).toLocaleDateString('id-ID') : 'N/A'} {/* NEW: Tanggal Cell */}
                       </td>
                       <td style={styles.tableCell}>
                         <div className="select is-small is-rounded" style={dropdownStyles.selectContainer}>
@@ -306,8 +312,7 @@ const JanjiList = () => {
                           <FaEdit size={14} />
                         </Link>
                         <button
-                          // OLD: onClick={() => deleteJanji(item.id)}
-                          onClick={() => handleDeleteClick(item.id)} // NEW: Use modal handler
+                          onClick={() => handleDeleteClick(item.id)}
                           style={{ ...styles.actionButtonSmall, ...styles.deleteButton }}
                           title="Hapus"
                         >
@@ -614,10 +619,6 @@ const styles = {
     cursor: 'pointer',
     transition: 'background-color 0.2s ease, transform 0.1s ease',
     boxShadow: '0 4px 8px rgba(220, 53, 69, 0.2)',
-    '&:hover': { // This is pseudo-class, won't work with inline style directly.
-      backgroundColor: '#C82333',
-      transform: 'translateY(-2px)',
-    },
   },
   modalCancelButton: {
     backgroundColor: '#6C757D', // Abu-abu untuk batal
@@ -630,10 +631,6 @@ const styles = {
     cursor: 'pointer',
     transition: 'background-color 0.2s ease, transform 0.1s ease',
     boxShadow: '0 4px 8px rgba(108, 117, 125, 0.2)',
-    '&:hover': { // This is pseudo-class, won't work with inline style directly.
-      backgroundColor: '#5A6268',
-      transform: 'translateY(-2px)',
-    },
   },
 };
 

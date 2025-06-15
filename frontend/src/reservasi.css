@@ -1,11 +1,16 @@
 /* reservasi.css */
 
+:root {
+    --primary: #007bff; /* Example primary color, adjust as needed */
+    --bg-white: #ffffff;
+}
+
 .reservation-container {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  padding: 0;
-  margin: 0;
-  background-color: #fff;
-  color: #333;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    padding: 0;
+    margin: 0;
+    background-color: #fff;
+    color: #333;
 }
 
 .reservation-hero {
@@ -51,108 +56,177 @@
 }
 
 .reservation-form-section {
-  padding: 60px 20px;
-  max-width: 800px;
-  margin: 0 auto;
-  text-align: center;
+    padding: 60px 20px;
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
 }
 
 .reservation-form-section h2 {
-  font-size: 32px;
-  margin-bottom: 10px;
+    font-size: 32px;
+    margin-bottom: 10px;
 }
 
 .reservation-form-section p {
-  margin-bottom: 40px;
-  color: #666;
+    margin-bottom: 40px;
+    color: #666;
 }
 
 .reservation-form {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 }
 
 .form-group {
-  display: flex;
-  gap: 20px;
-  flex-wrap: wrap;
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
 }
 
-.form-group input,
-.form-group textarea {
-  flex: 1;
-  padding: 15px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  font-size: 16px;
-  width: 100%;
+/* --- START: CHANGES FOR FORM FIELD CONSISTENCY --- */
+
+/* Base styling for all form fields (inputs, textareas, and the wrapper for selects) */
+.form-field-wrapper {
+    flex: 1; /* Makes fields take equal width within a form-group */
+    min-width: 250px; /* Minimum width before wrapping to new line */
 }
 
-.form-group.full-width textarea {
-  width: 100%;
-  height: 120px;
-  resize: vertical;
+.input-style,
+.textarea-style {
+    width: 100%;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+    box-sizing: border-box;
+    background-color: #fff;
+    color: #333;
+    /* Ensure no extra outlines or shadows */
+    outline: none; /* Crucial: Removes the default focus outline */
+    box-shadow: none; /* Ensures no default box shadow */
+}
+
+/* Specific styling for the select dropdowns */
+.select-style {
+    position: relative;
+    width: 100%;
+    border: 1px solid #ddd; /* Apply border to the wrapper */
+    border-radius: 8px;
+    box-sizing: border-box;
+    background-color: #fff; /* Ensure white background for the wrapper */
+    /* Ensure no extra outlines or shadows */
+    outline: none;
+    box-shadow: none;
+}
+
+.select-style select {
+    width: 100%;
+    padding: 15px;
+    border: none; /* Crucial: Remove the select's intrinsic border */
+    border-radius: 8px; /* For consistency, though mostly hidden by wrapper */
+    font-size: 16px;
+    box-sizing: border-box;
+    appearance: none; /* Hides default browser arrow */
+    -webkit-appearance: none; /* For Safari/Chrome */
+    -moz-appearance: none; /* For Firefox */
+    background-color: transparent; /* Makes select background transparent to show wrapper's background */
+    color: #333;
+    cursor: pointer;
+    padding-right: 40px; /* Make space for our custom arrow */
+    /* NEW: Explicitly reset more properties for select */
+    outline: none; /* Remove focus outline on the select itself */
+    box-shadow: none; /* Remove any potential box shadow */
+    text-indent: 1px; /* Sometimes helps remove weird left-side lines */
+    text-overflow: ''; /* For older IE, might help with text truncation artifacts */
+    /* Further experimental resets if previous don't work */
+    background-image: none; /* Removes any default background images (like gradients) */
+}
+
+/* Custom arrow for select dropdowns */
+.select-style::after {
+    content: '\25BC'; /* Unicode for a solid down arrow */
+    position: absolute;
+    top: 50%;
+    right: 15px;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: #555;
+    font-size: 0.9em;
+}
+
+/* END: CHANGES FOR FORM FIELD CONSISTENCY */
+
+
+.form-group.full-width .textarea-style { /* Use textarea-style class here */
+    width: 100%;
+    height: 120px;
+    resize: vertical;
 }
 
 .btn-submit {
-  padding: 15px 30px;
-  background-color: #333;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background 0.3s;
+    padding: 15px 30px;
+    background-color: #333;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s;
 }
 
 .btn-submit:hover {
-  background-color: #555;
+    background-color: #555;
 }
 
+.label-hidden {
+    display: none; /* Hides labels visually for placeholder-only look */
+}
+
+/* --- Sections below are not changed as per request --- */
 .contact-section {
-  background-color: #f9f9f9;
-  padding: 60px 20px;
-  text-align: center;
+    background-color: #f9f9f9;
+    padding: 60px 20px;
+    text-align: center;
 }
 
 .contact-section h3 {
-  font-size: 28px;
-  margin-bottom: 30px;
+    font-size: 28px;
+    margin-bottom: 30px;
 }
 
 .contact-cards {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 30px;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 30px;
 }
 
 .contact-card {
-  background-color: #fff;
-  padding: 20px 30px;
-  border-radius: 12px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-  max-width: 300px;
-  text-align: left;
+    background-color: #fff;
+    padding: 20px 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    max-width: 300px;
+    text-align: left;
 }
 
 .contact-card h4 {
-  font-size: 20px;
-  margin-bottom: 10px;
+    font-size: 20px;
+    margin-bottom: 10px;
 }
 
 .contact-card p {
-  font-size: 15px;
-  color: #555;
-  line-height: 1.6;
+    font-size: 15px;
+    color: #555;
+    line-height: 1.6;
 }
 
 @media (max-width: 600px) {
-  .form-group {
-    flex-direction: column;
-  }
-  .reservation-hero h1 {
-    font-size: 32px;
-  }
+    .form-group {
+        flex-direction: column;
+    }
+    .reservation-hero h1 {
+        font-size: 32px;
+    }
 }

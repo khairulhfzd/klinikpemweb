@@ -236,7 +236,6 @@ const LandingPage = () => {
         </div>
       </section>
 
-
       {/* Tentang Kami */}
       <section id="about" className="section">
         <div className="container">
