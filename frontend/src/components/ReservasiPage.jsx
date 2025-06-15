@@ -1,21 +1,28 @@
 import React, { useEffect } from 'react';
-import '../reservasi.css';
+import '../reservasi.css'; // Pastikan ini mengimpor file CSS yang sudah diperbarui
 import { motion } from 'framer-motion';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import 'animate.css';
 
+// Inisialisasi AOS di luar komponen untuk memastikan hanya sekali
 AOS.init();
 
 const ReservasiPage = () => {
-    useEffect(() => {}, []);
+    // Gunakan useEffect untuk inisialisasi AOS jika diperlukan,
+    // atau untuk efek samping lainnya yang hanya berjalan sekali.
+    useEffect(() => {
+        // Jika Anda memiliki elemen yang dimuat secara dinamis setelah render awal,
+        // AOS.refresh() dapat dipanggil di sini.
+        // AOS.refresh();
+    }, []);
 
     return (
         <div className="reservation-container">
             {/* Hero Section */}
             <div className="reservation-hero" data-aos="fade-down" data-aos-duration="1000">
-                <h1 className="animate__animated animate__fadeInDown">TABLE RESERVATION</h1>
-                <p className="breadcrumb">Home / Booking</p>
+                <h1 className="animate__animated animate__fadeInDown">BEST CARING BETTER DOCTOR</h1>
+                <p className="breadcrumb">Kesehatanmu Prioritas Kami</p>
             </div>
 
             {/* Tombol kembali ke Landing Page */}
@@ -32,9 +39,9 @@ const ReservasiPage = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 1 }}
             >
-                <h2>TABLE RESERVATION</h2>
+                <h2>RESERVASI ONLINE</h2>
                 <p>
-                    Isi formulir di bawah ini untuk membuat reservasi meja Anda di Klinik Hafizh.
+                    Isi formulir di bawah ini untuk membuat jadwal reservasi keperluan kesehatan Anda di Klinik Hafizh.
                     Kami berkomitmen untuk memberikan pelayanan terbaik.
                 </p>
 
@@ -54,9 +61,11 @@ const ReservasiPage = () => {
                     <div className="form-group full-width">
                         <textarea placeholder="Pesan atau Keterangan Tambahan (max 300 karakter)" maxLength={300}></textarea>
                     </div>
-                    <button type="submit" className="btn-submit">BOOK A TABLE →</button>
+                    <button type="submit" className="btn-submit">RESERVATION →</button>
                 </form>
             </motion.div>
+
+            {/* --- Bagian Konten dari LandingPage (Daftar Dokter, Tentang Kami, Layanan, Kontak) --- */}
 
             {/* Daftar Dokter */}
             <section id="dokter" className="section has-background-light">
@@ -69,6 +78,7 @@ const ReservasiPage = () => {
                     ].map((item, i) => (
                         <div key={i} className="column is-one-third" data-aos="zoom-in" data-aos-delay={i * 300}>
                             <div className="box has-text-centered">
+                                {/* Mengurangi ukuran gambar dokter */}
                                 <img src={item.img} alt={item.title} style={{ width: '200px', height: 'auto' }} />
                                 <h3 className="subtitle is-5 has-text-black">{item.title}</h3>
                                 <p>{item.desc}</p>
@@ -82,18 +92,28 @@ const ReservasiPage = () => {
             <section id="about" className="section">
                 <div className="container">
                     <div className="columns is-vcentered is-variable is-8">
-                        <div className="column is-6 has-text-centered" data-aos="fade-right">
-                            <figure className="image is-4by3">
+
+                        {/* Gambar */}
+                        <div className="column is-6 has-text-centered" data-aos="zoom-in">
+                            <figure className="image is-4by3" style={{ overflow: 'hidden', borderRadius: '12px' }}>
                                 <img
-                                    src="https://cdn.pixabay.com/photo/2020/06/17/11/09/doctor-5301226_960_720.png"
+                                    src="/dokterr.jpg"
                                     alt="Ilustrasi Klinik"
-                                    style={{ maxHeight: '300px', objectFit: 'contain' }}
+                                    style={{
+                                        width: '100%',
+                                        height: '100%',
+                                        objectFit: 'cover',
+                                        transition: 'transform 0.5s ease',
+                                    }}
+                                    className="animate__animated animate__fadeIn"
                                 />
                             </figure>
                         </div>
+
+                        {/* Teks */}
                         <div className="column is-6 has-text-left" data-aos="fade-left">
                             <h2 className="title is-3 has-text-black mb-3">
-                                Tentang <span style={{ color: 'var(--primary-light)' }}>Klinik Kami</span>
+                                Tentang <span style={{ color: 'var(--primary)' }}>Klinik Kami</span>
                             </h2>
                             <p className="subtitle is-5 has-text-black mb-4">
                                 Klinik Sehat telah berdiri sejak 2010 dan berkomitmen untuk memberikan pelayanan kesehatan berkualitas.
@@ -101,10 +121,15 @@ const ReservasiPage = () => {
                             <p className="has-text-black mb-4">
                                 Kami melayani berbagai kebutuhan kesehatan mulai dari pemeriksaan umum, vaksinasi, hingga layanan laboratorium modern. Selalu mengutamakan kenyamanan dan keamanan pasien.
                             </p>
-                            <a href="/tentang" className="button animate__animated animate__fadeInUp" data-aos="fade-up" data-aos-delay="500">
+                            <a href="/tentang"
+                                className="button is-primary is-light animate__animated animate__fadeInUp"
+                                data-aos="fade-up"
+                                data-aos-delay="500"
+                            >
                                 Selengkapnya
                             </a>
                         </div>
+
                     </div>
                 </div>
             </section>
@@ -115,13 +140,13 @@ const ReservasiPage = () => {
                     <h2 className="title has-text-black has-text-centered mb-6" data-aos="fade-up">Layanan Kami</h2>
                     <div className="columns is-multiline is-centered">
                         {[
-                            { icon: 'fa-stethoscope', title: 'Pemeriksaan Umum', desc: 'Layanan kesehatan umum untuk semua usia.' },
-                            { icon: 'fa-syringe', title: 'Vaksinasi', desc: 'Tersedia berbagai jenis vaksin untuk anak dan dewasa.' },
-                            { icon: 'fa-vials', title: 'Laboratorium', desc: 'Tes darah, urin, dan pemeriksaan lainnya.' }
+                            { icon: 'fa-stethoscope', color: 'info', title: 'Pemeriksaan Umum', desc: 'Layanan kesehatan umum untuk semua usia.' },
+                            { icon: 'fa-syringe', color: 'success', title: 'Vaksinasi', desc: 'Tersedia berbagai jenis vaksin untuk anak dan dewasa.' },
+                            { icon: 'fa-vials', color: 'danger', title: 'Laboratorium', desc: 'Tes darah, urin, dan pemeriksaan lainnya.' }
                         ].map((item, i) => (
                             <div key={i} className="column is-one-third" data-aos="fade-up" data-aos-delay={i * 300}>
                                 <div className="box has-text-centered">
-                                    <span className={`icon is-large mb-3`}>
+                                    <span className={`icon is-large has-text-${item.color} mb-3`}>
                                         <i className={`fas ${item.icon} fa-2x`}></i>
                                     </span>
                                     <h3 className="subtitle is-5 has-text-black">{item.title}</h3>
@@ -138,18 +163,17 @@ const ReservasiPage = () => {
                 <div className="container has-text-centered">
                     <h2 className="title has-text-black has-text-centered ">Hubungi Kami</h2>
                     <p>📍 Alamat: Jl. Kesehatan No.10, Bandung, Indonesia</p>
-                    <p>📞 Telepon: (021) 12345678</p>
-                    <p>📧 Email: info@kliniksehat.com</p>
+                    <p>📞 Telepon: (62) 87263817263</p>
+                    <p>📧 Email: @klinikhafizh.com</p>
                 </div>
             </section>
 
-            {/* Footer */}
             <motion.footer
-                className="footer has-background-primary has-text-black has-text-centered animate__animated animate__fadeIn"
+                style={{ backgroundColor: "#0d6efd", color: "white" }}
+                className="footer has-text-centered animate__animated animate__fadeIn"
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
                 transition={{ duration: 1 }}
-                style={{ background: 'var(--primary-gradient)', color: 'var(--text-light)' }}
             >
                 <div className="content">
                     <p>&copy; 2025 Klinik Hafizh. All rights reserved.</p>

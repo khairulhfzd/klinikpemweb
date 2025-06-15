@@ -1,4 +1,4 @@
-/* --- Tambahkan kode @keyframes ini di bawahnya --- */
+/* Keyframe Animations */
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
@@ -8,127 +8,15 @@
   from { transform: scale(0.8); opacity: 0; }
   to { transform: scale(1); opacity: 1; }
 }
-/* --- Akhir penambahan --- */
 
 @keyframes fadeSlideIn {
-  0% {
-    opacity: 0;
-    transform: translateY(40px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  0% { opacity: 0; transform: translateY(40px); }
+  100% { opacity: 1; transform: translateY(0); }
 }
 
-:root {
-  --primary: #007BFF;
-  --primary-light: #00d4ff;
-  --text-dark: #212529;
-  --text-light: #6c757d;
-  --bg-light: #f9f9f9;
-  --bg-white: #ffffff;
-  --section-padding: 4rem;
-}
-
-body {
-  margin: 0;
-  padding: 0;
-  font-family: 'Segoe UI', sans-serif;
-  background-color: var(--bg-white);
-  color: var(--text-dark);
-}
-
-/* Navbar */
-.custom-navbar {
-  background-color: white;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  padding: 0.3rem 2rem;
-  position: sticky;
-  top: 0;
-  z-index: 999;
-}
-
-.navbar-item {
-  color: var(--text-dark);
-  font-weight: 500;
-  padding: 0.5rem 1rem;
-  transition: color 0.3s ease;
-} 
-
-.navbar-item:hover {
-  background-color: transparent !important;
-  color: #1fa2ff !important;
-}
-
-
-.navbar-brand strong {
-  font-size: 1.3rem;
-  color: var(--text-dark);
-}
-
-/* Hero Section */
-#hero-section {
-  background: linear-gradient(120deg, var(--primary), var(--primary-light));
-  clip-path: polygon(0 0, 100% 0, 100% 87%, 0 100%);
-  color: white;
-  padding: var(--section-padding) 1.5rem 6rem;
-}
-
-#hero-section .title {
-  margin-bottom: 1rem;
-}
-
-#hero-section .button {
-  font-weight: 600;
-  border-radius: 6px;
-}
-
-/* General Section Styling */
-.section {
-  padding: var(--section-padding) 1.5rem;
-}
-
-/* Dokter & Services */
-.box {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  border-radius: 10px;
-  background-color: white;
-  box-shadow: 0 4px 10px rgba(0, 123, 255, 0.06);
-}
-
-.box:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 8px 20px rgba(0, 123, 255, 0.1);
-}
-
-#dokter,
-#services {
-  background-color: var(--bg-light);
-}
-
-/* Icons */
-.icon {
-  color: var(--primary);
-}
-
-/* Button */
-.button.is-primary {
-  background-color: var(--primary);
-  color: white;
-  border: none;
-  transition: background 0.3s ease;
-}
-
-.button.is-primary:hover {
-  background-color: #0056b3;
-}
-
-/* Footer */
-.footer {
-  background-color: var(--primary);
-  color: white;
-  padding: 2rem 1rem;
+@keyframes dropdownSlide {
+  from { transform: translateY(-10px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
 }
 
 @keyframes pulseSoft {
@@ -137,7 +25,283 @@ body {
   100% { transform: scale(1); }
 }
 
-.pulse-soft {
-  animation: pulseSoft 2s infinite;
+@keyframes scrollDokter {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
 }
 
+/* Root Variables */
+:root {
+  --primary: #007BFF;
+  --primary-light: #64B5F6;
+  --text-dark: #212529;
+  --text-light: #6c757d;
+  --bg-light: #f8f9fa;
+  --bg-white: #ffffff;
+  --section-padding: 4rem;
+  --card-border-radius: 12px;
+  --shadow-subtle: 0 2px 5px rgba(0, 0, 0, 0.08);
+  --shadow-hover: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* Base Body Styles */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+  background-color: var(--bg-white);
+  color: var(--text-dark);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Navbar Styling */
+.custom-navbar {
+  background-color: transparent !important;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  padding: 1rem 1.5rem;
+}
+
+.custom-navbar .navbar-item,
+.custom-navbar .navbar-brand strong {
+  color: white !important;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+  transition: color 0.3s ease;
+}
+
+.custom-navbar .navbar-item:hover {
+  background-color: transparent !important;
+  color: var(--primary-light) !important;
+}
+
+.navbar-link:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+}
+
+.navbar-dropdown {
+  background-color: #1f1f1f !important;
+  padding: 0.75rem 0;
+  border-radius: 8px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  min-width: 150px;
+  animation: dropdownSlide 0.3s ease-out;
+}
+
+.navbar-dropdown .navbar-item {
+  color: white !important;
+  padding: 0.5rem 1rem;
+}
+
+.navbar-dropdown .navbar-item:hover {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  color: var(--primary-light) !important;
+}
+
+/* Hero Section */
+#hero-section .hero-body {
+  padding-top: 5rem;
+  padding-bottom: 5rem;
+}
+
+#hero-section .title {
+  margin-bottom: 1rem;
+  font-size: 2.8rem;
+  line-height: 1.2;
+}
+
+#hero-section p {
+  font-size: 1.15rem;
+  margin-bottom: 1.5rem;
+}
+
+#hero-section .button {
+  font-weight: 600;
+  border-radius: 6px;
+  padding: 1rem 2rem;
+  font-size: 1.1rem;
+}
+
+/* Section Styling */
+.section {
+  padding: var(--section-padding) 1.5rem;
+}
+
+/* Card/Box Styling (Digunakan untuk Dokter & Services) */
+.box {
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+  border-radius: var(--card-border-radius);
+  background-color: var(--bg-white);
+  box-shadow: var(--shadow-subtle);
+  border: 1px solid #e0e0e0; /* Tambahkan border tipis untuk definisi */
+}
+
+.box:hover {
+  transform: translateY(-8px); /* Efek hover sedikit lebih tinggi */
+  box-shadow: var(--shadow-hover);
+  background-color: #fcfcfc; /* Sedikit perubahan warna latar saat hover */
+}
+
+/* Dokter Section Autoscroll */
+#dokter {
+  background-color: var(--bg-light);
+  overflow: hidden;
+}
+
+.dokter-scroll-wrapper {
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+
+.dokter-scroll-content {
+  display: inline-flex;
+  animation: scrollDokter 40s linear infinite;
+}
+
+.dokter-scroll-wrapper:hover .dokter-scroll-content {
+  animation-play-state: paused;
+}
+
+.dokter-card-column {
+  flex: 0 0 auto;
+  min-width: 260px;
+  width: 280px;
+  margin-right: 25px;
+  padding: 0 0.75rem;
+}
+
+.dokter-card-content {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 20px 15px;
+  border-radius: var(--card-border-radius);
+  background-color: var(--bg-white);
+  box-shadow: var(--shadow-subtle);
+  border: 1px solid #e0e0e0;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+}
+
+.dokter-card-content:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-hover);
+  background-color: #fcfcfc;
+}
+
+.dokter-card-content img {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 50%;
+  margin-bottom: 15px;
+  border: 4px solid var(--bg-white);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.dokter-card-content img:hover {
+  transform: scale(1.08);
+}
+
+.dokter-card-content .subtitle {
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: var(--text-dark);
+  font-size: 1.25rem;
+}
+
+.dokter-card-content p {
+  color: var(--text-light);
+  font-size: 1rem;
+  margin-bottom: 0;
+}
+
+/* Footer */
+.footer {
+  background-color: var(--primary);
+  color: white;
+  padding: 2rem 1.5rem;
+  text-align: center;
+}
+
+/* Button Styling */
+.button.is-primary {
+  background-color: var(--primary);
+  color: white;
+  border: none;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.button.is-primary:hover {
+  background-color: #0056b3;
+  transform: translateY(-2px);
+}
+
+/* Icons */
+.icon {
+  color: var(--primary);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  #hero-section .hero-body {
+    padding-top: 4rem;
+    padding-bottom: 4rem;
+  }
+
+  #hero-section .title {
+    font-size: 2rem;
+  }
+
+  #hero-section p {
+    font-size: 1rem;
+  }
+
+  #hero-section .button {
+    padding: 0.8rem 1.5rem;
+    font-size: 1rem;
+  }
+
+  .dokter-card-column {
+    min-width: 240px;
+    width: 260px;
+    margin-right: 15px;
+    padding: 0 0.5rem;
+  }
+
+  .section {
+    padding: 3rem 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .dokter-card-column {
+    min-width: 200px;
+    width: 220px;
+    margin-right: 10px;
+  }
+
+  .dokter-card-content img {
+    width: 100px;
+    height: 100px;
+  }
+
+  .dokter-card-content .subtitle {
+    font-size: 1rem;
+  }
+
+  .dokter-card-content p {
+    font-size: 0.85rem;
+  }
+}

@@ -1,0 +1,301 @@
+
+
+.tentang-page {
+  font-family: 'Poppins', sans-serif;
+  scroll-behavior: smooth;
+  background-color: #f0f8ff;
+}
+
+/* Hero Section */
+.hero-section {
+  position: relative;
+  height: 100vh; /*nidisini ukuran */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  text-align: center;
+  padding: 10rem;
+  z-index: 0;
+}
+
+.hero-section::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('/public/hafizh.png'); 
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  filter: blur(6px);
+  -webkit-filter: blur(6px); 
+  z-index: -1; 
+  /* background-color: rgba(0, 0, 0, 0.4); */
+  /* background-blend-mode: overlay; */
+}
+
+.hero-image {
+  position: absolute;
+  right: 5%;
+  bottom: 5%;
+  max-height: 80%;
+  z-index: 1;
+  object-fit: contain;
+}
+
+.hero-overlay {
+  position: relative;
+  z-index: 2;
+  max-width: 700px;
+  padding: 2rem;
+}
+
+.hero-overlay h1 {
+  font-size: 3.2rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  color: white;
+  text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.9);
+}
+
+.hero-overlay p {
+  font-size: 1.3rem;
+  color: #f0f0f0;
+  margin-bottom: 2rem;
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.9);
+}
+
+/* Desain Tombol Reservasi (tetap sama) */
+.btn-reservasi {
+  display: inline-block;
+  background-color: #007bff;
+  color: white;
+  padding: 1rem 3rem;
+  border-radius: 50px;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 1.2rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 25px rgba(0, 123, 255, 0.4);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.btn-reservasi:hover {
+  background-color: #0056b3;
+  transform: translateY(-5px);
+  box-shadow: 0 12px 35px rgba(0, 123, 255, 0.5);
+}
+
+@keyframes pulse-gentle {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 8px 25px rgba(0, 123, 255, 0.4);
+  }
+  50% {
+    transform: scale(1.02);
+    box-shadow: 0 10px 30px rgba(0, 123, 255, 0.55);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 8px 25px rgba(0, 123, 255, 0.4);
+  }
+}
+
+.btn-reservasi.pulse-soft {
+  animation: pulse-gentle 2.5s infinite ease-in-out;
+}
+
+/* Sejarah Section */
+.sejarah-section {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  background-color: #f0f8ff;
+}
+
+.content-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 3rem;
+  max-width: 1200px;
+  width: 100%;
+  flex-wrap: wrap;
+}
+
+.img-sejarah {
+  flex: 1;
+  max-width: 500px;
+  border-radius: 20px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+.text {
+  flex: 1;
+  padding: 1rem;
+}
+
+.text h2 {
+  font-size: 2.5rem;
+  color: #023e8a;
+  margin-bottom: 1rem;
+}
+
+.text p {
+  font-size: 1.15rem;
+  color: #444;
+  line-height: 1.7;
+}
+
+/* Video Section */
+.video-section {
+  text-align: center;
+  padding: 4rem 2rem;
+  background-color: #ffffff;
+}
+
+.video-section h2 {
+  font-size: 2.5rem;
+  color: #023e8a;
+  margin-bottom: 2rem;
+}
+
+.video-container iframe {
+  width: 80%;
+  height: 450px;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+/* Map & Contact */
+.map-section {
+  background-color: #e0f7fa;
+  padding: 4rem 2rem;
+}
+
+.map-section .content-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.kontak {
+  flex: 1;
+  font-size: 1.15rem;
+  color: #023e8a;
+}
+
+.kontak h2 {
+  margin-bottom: 1rem;
+  font-size: 2.2rem;
+}
+
+.map {
+  flex: 1;
+}
+
+.map iframe {
+  width: 100%;
+  height: 350px;
+  border: none;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+/* Responsive */
+@media screen and (max-width: 768px) {
+  .content-wrapper {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .hero-overlay {
+    padding: 2rem;
+  }
+
+  .hero-overlay h1 {
+    font-size: 2.5rem;
+  }
+
+  .hero-overlay p {
+    font-size: 1rem;
+  }
+
+  .btn-reservasi {
+    padding: 0.8rem 2rem;
+    font-size: 1rem;
+  }
+
+  .hero-image {
+    position: relative;
+    max-width: 80%;
+    height: auto;
+    right: 0;
+    bottom: 0;
+    margin-top: 2rem;
+  }
+
+  .video-container iframe,
+  .map iframe {
+    width: 100%;
+    height: 300px;
+  }
+
+  .img-sejarah {
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
+.services-modal-section {
+  position: relative;
+  z-index: 10;
+  margin-top: -100px; /* Sesuaikan sesuai kebutuhan */
+  padding: 2rem 0;
+}
+
+.services-modal-section .container {
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  padding: 2rem;
+  max-width: 960px; /* Atau lebar yang Anda inginkan */
+  margin: 0 auto;
+}
+
+.services-modal-section .service-item {
+  text-align: center;
+  padding: 1rem;
+}
+
+.services-modal-section .service-item .icon {
+  font-size: 3rem; /* Ukuran ikon */
+  display: block;
+  margin-bottom: 1rem;
+}
+
+.services-modal-section .service-item h3 {
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+
+.services-modal-section .service-item p {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+/* Sesuaikan juga margin-top untuk section selanjutnya jika perlu */
+.sejarah-section {
+  margin-top: 2rem; /* Sesuaikan ini jika desain tumpang tindih berubah */
+}

@@ -120,7 +120,7 @@ const LoginPage = () => {
               <input type="text" placeholder="Nama" value={nama} onChange={e => setNama(e.target.value)} required />
               <input type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} required />
               <input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} required />
-              <input type="text" placeholder="Gender (L/P)" value={gender} onChange={e => setGender(e.target.value)} />
+              <input type="text" placeholder="Gender (Laki-laki/Perempuan)" value={gender} onChange={e => setGender(e.target.value)} />
               <input type="text" placeholder="Alamat" value={alamat} onChange={e => setAlamat(e.target.value)} />
               <input type="text" placeholder="No Telepon" value={noTlp} onChange={e => setNoTlp(e.target.value)} />
               <button type="submit">Daftar</button>
