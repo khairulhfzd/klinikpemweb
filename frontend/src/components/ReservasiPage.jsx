@@ -1,10 +1,11 @@
-import React, { useEffect, useState, useRef } from 'react'; // Added useRef
+import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import '../reservasi.css'; // Make sure this CSS file is updated
 import { motion } from 'framer-motion';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import 'animate.css';
+import { isAuthenticated, getLoggedInUserId } from '../utils/auth'; // Import functions from auth.js
 
 // Initialize AOS once
 AOS.init();
@@ -49,33 +50,42 @@ const ReservasiPage = () => {
                     axios.get('http://localhost:5000/jadwal'),
                 ]);
 
-                setUsers(usersRes.data); // This updates the 'users' state
+                setUsers(usersRes.data);
                 setDokters(doktersRes.data);
                 setJadwalList(jadwalRes.data);
 
-                // --- LOGIC FOR SIMULATING LOGGED-IN USER ---
-                // Look for user with ID 2. If not found, fallback to the first user.
-                if (usersRes.data.length > 0) {
-                    const loggedInUser = usersRes.data.find(user => user.id === 2); // Find user with ID 2
-                    if (loggedInUser) { // If user with ID 2 is found
-                        setSelectedUser(loggedInUser.id.toString());
-                        setSelectedUserName(loggedInUser.nama);
-                        setSelectedUserEmail(loggedInUser.email || 'N/A');
-                        setSelectedUserPhone(loggedInUser.no_tlp || 'N/A');
-                    } else {
-                        // Fallback if user with ID 2 is not found, take the first user if available
-                        console.warn("User with ID 2 not found. Using the first user as fallback.");
-                        const firstUser = usersRes.data[0];
-                        setSelectedUser(firstUser.id.toString());
-                        setSelectedUserName(firstUser.nama);
-                        setSelectedUserEmail(firstUser.email || 'N/A');
-                        setSelectedUserPhone(firstUser.no_tlp || 'N/A');
+                // --- LOGIC FOR DETERMINING LOGGED-IN USER BASED ON utils/auth.js ---
+                let userToSet = null;
+                if (isAuthenticated()) {
+                    const loggedInUserId = getLoggedInUserId(); // Get ID from auth utility
+                    if (loggedInUserId) {
+                        userToSet = usersRes.data.find(user => user.id.toString() === loggedInUserId);
+                        if (!userToSet) {
+                            console.warn(`Pengguna dengan ID ${loggedInUserId} dari auth utility tidak ditemukan. Mungkin data tidak sinkron atau user telah dihapus.`);
+                            // Optionally, log out the user if their ID isn't found
+                            // logout(); // Uncomment this if you want to force logout on ID mismatch
+                        }
                     }
                 }
 
+                if (userToSet) {
+                    setSelectedUser(userToSet.id.toString());
+                    setSelectedUserName(userToSet.nama);
+                    setSelectedUserEmail(userToSet.email || 'N/A');
+                    setSelectedUserPhone(userToSet.no_tlp || 'N/A');
+                } else {
+                    // If no user is logged in or user data not found, clear all user-related states
+                    setSelectedUser('');
+                    setSelectedUserName('');
+                    setSelectedUserPhoto('');
+                    setSelectedUserEmail('');
+                    setSelectedUserPhone('');
+                    console.log("Tidak ada pengguna yang terdeteksi login atau data pengguna tidak valid.");
+                }
+
             } catch (err) {
-                console.error('Failed to fetch data for reservation page:', err);
-                setError("Failed to load reservation data. Ensure the backend server is running and data is available.");
+                console.error('Gagal mengambil data untuk halaman reservasi:', err);
+                setError("Gagal memuat data reservasi. Pastikan server backend berjalan dan data tersedia.");
             } finally {
                 setLoading(false);
             }
@@ -83,20 +93,16 @@ const ReservasiPage = () => {
         fetchData();
     }, []); // This effect runs only once when the component mounts
 
-    // --- Update User Photo, Name, Email, and Phone on User Selection (Now automatic) ---
-    // This effect will now respond to changes in selectedUser which is set automatically when data loads
+    // --- Update User Photo, Name, Email, and Phone when selectedUser changes ---
     useEffect(() => {
         const user = users.find(u => u.id === parseInt(selectedUser));
         if (user) {
             const photoUrl = user.foto ? `http://localhost:5000/images/${user.foto}` : '';
             setSelectedUserPhoto(photoUrl);
-            // selectedUserName is already set in the first useEffect, no need to reset here
             setSelectedUserEmail(user.email || 'N/A');
             setSelectedUserPhone(user.no_tlp || 'N/A');
         } else {
-            // If no user is selected (e.g., no data yet or first user not found)
             setSelectedUserPhoto('');
-            // selectedUserName is not reset here as it's set in the first useEffect
             setSelectedUserEmail('');
             setSelectedUserPhone('');
         }
@@ -153,9 +159,10 @@ const ReservasiPage = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // Basic validation
+        // Validasi dasar
+        // Pastikan selectedUser tidak kosong, artinya ada user yang terdeteksi login
         if (!selectedUser || !selectedSpesialis || !selectedDokterId || !selectedJadwalId || !selectedTanggal) {
-            alert("Please complete all selections (Specialist, Doctor, Arrival Time, Date) before submitting the reservation.");
+            alert("Mohon lengkapi semua pilihan (Nama Lengkap, Spesialis, Dokter, Waktu Kedatangan, Tanggal) sebelum mengirim reservasi.");
             return;
         }
 
@@ -183,7 +190,7 @@ const ReservasiPage = () => {
 
         } catch (err) {
             console.error('Failed to submit reservation:', err.response?.data || err.message || err);
-            alert('Failed to submit reservation. Please try again or contact the administrator.');
+            alert('Gagal mengirim reservasi. Silakan coba lagi atau hubungi admin.');
         }
     };
 
@@ -196,7 +203,7 @@ const ReservasiPage = () => {
             <section className="hero is-fullheight is-info is-bold">
                 <div className="hero-body">
                     <div className="container has-text-centered">
-                        <p className="title">Loading reservation data...</p>
+                        <p className="title">Memuat data reservasi...</p>
                         <progress className="progress is-small is-primary" max="100"></progress>
                     </div>
                 </div>
@@ -209,7 +216,7 @@ const ReservasiPage = () => {
             <section className="hero is-fullheight is-danger is-bold">
                 <div className="hero-body">
                     <div className="container has-text-centered">
-                        <p className="title">An Error Occurred</p>
+                        <p className="title">Terjadi Kesalahan</p>
                         <p className="subtitle">{error}</p>
                     </div>
                 </div>
@@ -219,55 +226,56 @@ const ReservasiPage = () => {
 
     return (
         <div className="reservation-container">
-            {/* Success Popup Modal */}
+            {/* Pop-up Sukses Modal */}
             {showSuccessPopup && (
                 <div className="modal is-active">
                     <div className="modal-background"></div>
-                    <div className="modal-content has-text-centered p-5" style={styles.successPopup}>
-                        <h3 className="title is-4 has-text-white">Reservation Successful!</h3>
-                        <p className="subtitle is-6 has-text-white">Your reservation has been successfully submitted and is awaiting confirmation. Please check your email regularly.</p>
+                    {/* Menggunakan gaya yang diperbarui untuk centering */}
+                    <div className="modal-content has-text-centered" style={styles.successPopup}>
+                        <h3 className="title is-4 has-text-white">Reservasi Berhasil!</h3>
+                        <p className="subtitle is-6 has-text-white">Reservasi Anda telah berhasil dikirim dan menunggu konfirmasi. Silakan periksa email Anda secara berkala.</p>
                         <button
                             className="button is-primary is-light mt-4"
                             onClick={() => setShowSuccessPopup(false)}
                         >
-                            Close
+                            Tutup
                         </button>
                     </div>
                 </div>
             )}
 
-            {/* Hero Section */}
+            {/* Bagian Hero */}
             <div className="reservation-hero" data-aos="fade-down" data-aos-duration="1000">
                 <h1 className="animate__animated animate__fadeInDown">BEST CARING BETTER DOCTOR</h1>
-                <p className="breadcrumb">Your Health is Our Priority</p>
+                <p className="breadcrumb">Kesehatanmu Prioritas Kami</p>
             </div>
 
-            {/* Back to Landing Page Button */}
+            {/* Tombol kembali ke Landing Page */}
             <div className="has-text-centered" style={{ margin: '20px 0' }}>
                 <a href="/" className="button is-primary is-medium animate__animated animate__fadeInUp">
-                    ← Back to Landing Page
+                    ← Kembali ke Landing Page
                 </a>
             </div>
 
-            {/* Reservation Form */}
+            {/* Formulir Reservasi */}
             <motion.div
                 className="reservation-form-section"
                 initial={{ opacity: 0, y: 50 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 1 }}
             >
-                <h2>ONLINE RESERVATION</h2>
+                <h2>RESERVASI ONLINE</h2>
                 <p>
-                    Fill out the form below to schedule your health appointment at Hafizh Clinic.
-                    We are committed to providing the best service.
+                    Isi formulir di bawah ini untuk membuat jadwal reservasi keperluan kesehatan Anda di Klinik Hafizh.
+                    Kami berkomitmen untuk memberikan pelayanan terbaik.
                 </p>
 
                 <form className="reservation-form" onSubmit={handleSubmit}>
-                    {/* First Form Group: Date and Full Name (Read-only Dropdown with one option) */}
+                    {/* Kelompok Formulir Pertama: Tanggal dan Nama Lengkap (Dropdown Dinamis Berdasarkan Login) */}
                     <div className="form-group">
-                        {/* Date Picker */}
+                        {/* Pemilih Tanggal */}
                         <div className="form-field-wrapper">
-                            <label className="label-hidden" htmlFor="reservation-date">Date</label>
+                            <label className="label-hidden" htmlFor="reservation-date">Tanggal</label>
                             <input
                                 id="reservation-date"
                                 className="input-style"
@@ -280,28 +288,29 @@ const ReservasiPage = () => {
                             />
                         </div>
 
-                        {/* Full Name (Dropdown, now not disabled, only has one option) */}
+                        {/* Nama Lengkap (Dropdown menampilkan hanya pengguna yang login) */}
                         <div className="form-field-wrapper">
-                            <label className="label-hidden" htmlFor="reservation-user">Full Name</label>
+                            <label className="label-hidden" htmlFor="reservation-user">Nama Lengkap</label>
                             <div className="select-style">
                                 <select
                                     id="reservation-user"
                                     value={selectedUser}
-                                    onChange={(e) => setSelectedUser(e.target.value)}
+                                    // onChange tidak diperlukan karena ini akan read-only
                                     required
+                                    disabled={!selectedUser} // Nonaktifkan jika tidak ada user yang terdeteksi login
                                 >
-                                    {/* Displaying only one option: the logged-in user */}
+                                    {/* Menampilkan satu opsi: pengguna yang sedang login, atau pesan jika tidak ada */}
                                     {selectedUser && selectedUserName ? (
                                         <option value={selectedUser}>{selectedUserName}</option>
                                     ) : (
-                                        <option value="">Loading User Name...</option>
+                                        <option value="">Mohon Login Terlebih Dahulu</option>
                                     )}
                                 </select>
                             </div>
                         </div>
                     </div>
 
-                    {/* Display selected user's photo (if available) */}
+                    {/* Menampilkan foto pengguna yang dipilih (jika tersedia) */}
                     {selectedUserPhoto && (
                         <div className="has-text-centered mt-4 mb-4">
                             <figure className="image is-96x96 is-inline-block">
@@ -325,27 +334,27 @@ const ReservasiPage = () => {
                         </div>
                     )}
 
-                    {/* New Form Group for Specialist and Doctor */}
+                    {/* Kelompok Formulir Baru untuk Spesialis dan Dokter */}
                     <div className="form-group">
-                        {/* Specialist */}
+                        {/* Spesialis */}
                         <div className="form-field-wrapper">
-                            <label className="label-hidden" htmlFor="reservation-spesialis">Specialist</label>
+                            <label className="label-hidden" htmlFor="reservation-spesialis">Spesialis</label>
                             <div className="select-style">
                                 <select
                                     id="reservation-spesialis"
                                     value={selectedSpesialis}
                                     onChange={(e) => {
                                         setSelectedSpesialis(e.target.value);
-                                        setSelectedDokterId(''); // Reset doctor
-                                        setSelectedJadwalId(''); // Reset schedule
+                                        setSelectedDokterId(''); // Reset dokter
+                                        setSelectedJadwalId(''); // Reset jadwal
                                     }}
                                     required
                                 >
-                                    <option value="">Select Specialist</option>
+                                    <option value="">Pilih Spesialis</option>
                                     {dokters.length === 0 ? (
-                                        <option disabled>No specialist data available</option>
+                                        <option disabled>Tidak ada data spesialis</option>
                                     ) : (
-                                        // Use Set to get unique specialists
+                                        // Menggunakan Set untuk mendapatkan spesialis unik
                                         [...new Set(dokters.map((d) => d.spesialis))].map((sp, index) => (
                                             <option key={index} value={sp}>{sp}</option>
                                         ))
@@ -354,23 +363,23 @@ const ReservasiPage = () => {
                             </div>
                         </div>
 
-                        {/* Doctor (conditionally rendered) */}
+                        {/* Dokter (dirender secara kondisional) */}
                         <div className="form-field-wrapper">
-                            <label className="label-hidden" htmlFor="reservation-dokter">Doctor</label>
+                            <label className="label-hidden" htmlFor="reservation-dokter">Dokter</label>
                             <div className="select-style">
                                 <select
                                     id="reservation-dokter"
                                     value={selectedDokterId}
                                     onChange={(e) => {
                                         setSelectedDokterId(e.target.value);
-                                        setSelectedJadwalId(''); // Reset schedule
+                                        setSelectedJadwalId(''); // Reset jadwal
                                     }}
                                     required
-                                    disabled={!selectedSpesialis} // Disable if no specialist is selected
+                                    disabled={!selectedSpesialis} // Nonaktifkan jika tidak ada spesialis yang dipilih
                                 >
-                                    <option value="">Select Doctor</option>
+                                    <option value="">Pilih Dokter</option>
                                     {dokters.filter((d) => d.spesialis === selectedSpesialis).length === 0 ? (
-                                        <option disabled>No doctors available for this specialist</option>
+                                        <option disabled>Tidak ada dokter untuk spesialis ini</option>
                                     ) : (
                                         dokters
                                             .filter((d) => d.spesialis === selectedSpesialis)
@@ -385,7 +394,7 @@ const ReservasiPage = () => {
                         </div>
                     </div>
 
-                    {/* Display selected doctor's photo (if available) */}
+                    {/* Menampilkan foto dokter yang dipilih (jika tersedia) */}
                     {selectedDokter && selectedDokter.foto && (
                         <div className="has-text-centered mt-4 mb-4">
                             <figure className="image is-128x128 is-inline-block">
@@ -395,63 +404,61 @@ const ReservasiPage = () => {
                                     alt={selectedDokter.nama}
                                     onError={(e) => {
                                         e.target.onerror = null;
-                                        e.target.src = 'https://via.placeholder.com/128/d1c4e9/5e35b1?text=Doctor'; // Fallback
+                                        e.target.src = 'https://via.placeholder.com/128/d1c4e9/5e35b1?text=Dokter'; // Fallback
                                         console.log('Error loading doctor photo:', `http://localhost:5000/images/${selectedDokter.foto}`);
                                     }}
                                 />
                             </figure>
-                            <p className="has-text-weight-semibold mt-2">{selectedDokter.nama}</p>
-                            <p className="has-text-grey is-size-7">{selectedDokter.spesialis}</p>
                         </div>
                     )}
 
-                    {/* Second Form Group: Email Address and Number of Guests */}
+                    {/* Kelompok Formulir Kedua: Alamat Email dan Jumlah Tamu */}
                     <div className="form-group">
-                        {/* Email Address (Read-only from selected user) */}
+                        {/* Alamat Email (Read-only dari pengguna yang dipilih) */}
                         <div className="form-field-wrapper">
-                            <label className="label-hidden" htmlFor="user-email">Email Address</label>
+                            <label className="label-hidden" htmlFor="user-email">Alamat Email</label>
                             <input
                                 id="user-email"
                                 className="input-style"
                                 type="email"
-                                placeholder="Email Address"
+                                placeholder="Alamat Email"
                                 value={selectedUserEmail}
                                 readOnly
                                 disabled={!selectedUser}
                             />
                         </div>
 
-                        {/* Number of Guests (Disabled, not applicable) */}
+                        {/* Jumlah Tamu (Dinonaktifkan, tidak berlaku) */}
                         <div className="form-field-wrapper">
-                            <label className="label-hidden" htmlFor="jumlah-tamu">Number of Guests</label>
+                            <label className="label-hidden" htmlFor="jumlah-tamu">Jumlah Tamu</label>
                             <input
                                 id="jumlah-tamu"
                                 className="input-style"
                                 type="number"
-                                placeholder="Number of Guests (Not Applicable)"
+                                placeholder="Jumlah Tamu (Tidak Berlaku)"
                                 min="1"
                                 value="" // Keep value empty
-                                disabled // Disable
+                                disabled // Nonaktifkan
                             />
                         </div>
                     </div>
 
-                    {/* Third Form Group: Arrival Time (Schedule Select) and Phone Number */}
+                    {/* Kelompok Formulir Ketiga: Waktu Kedatangan (Pilih Jadwal) dan Nomor Telepon */}
                     <div className="form-group">
-                        {/* Arrival Time (Schedule Select) */}
+                        {/* Waktu Kedatangan (Pilih Jadwal) */}
                         <div className="form-field-wrapper">
-                            <label className="label-hidden" htmlFor="reservation-time">Arrival Time</label>
+                            <label className="label-hidden" htmlFor="reservation-time">Waktu Kedatangan</label>
                             <div className="select-style">
                                 <select
                                     id="reservation-time"
                                     value={selectedJadwalId}
                                     onChange={(e) => setSelectedJadwalId(e.target.value)}
                                     required
-                                    disabled={!selectedDokterId} // Disable until doctor is selected
+                                    disabled={!selectedDokterId} // Nonaktifkan sampai dokter dipilih
                                 >
-                                    <option value="">Arrival Time</option>
+                                    <option value="">Waktu Kedatangan</option>
                                     {jadwalList.length === 0 ? (
-                                        <option disabled>No schedule available</option>
+                                        <option disabled>Tidak ada jadwal tersedia</option>
                                     ) : (
                                         jadwalList.map((jadwalItem) => (
                                             <option key={jadwalItem.id} value={jadwalItem.id}>
@@ -463,14 +470,14 @@ const ReservasiPage = () => {
                             </div>
                         </div>
 
-                        {/* Phone Number (Read-only from selected user) */}
+                        {/* Nomor Telepon (Read-only dari pengguna yang dipilih) */}
                         <div className="form-field-wrapper">
-                            <label className="label-hidden" htmlFor="user-phone">Phone Number</label>
+                            <label className="label-hidden" htmlFor="user-phone">Nomor Telepon</label>
                             <input
                                 id="user-phone"
                                 className="input-style"
                                 type="tel"
-                                placeholder="Phone Number"
+                                placeholder="Nomor Telepon"
                                 value={selectedUserPhone}
                                 readOnly
                                 disabled={!selectedUser}
@@ -478,14 +485,14 @@ const ReservasiPage = () => {
                         </div>
                     </div>
 
-                    {/* Additional Message or Notes (Textarea) */}
+                    {/* Pesan atau Keterangan Tambahan (Textarea) */}
                     <div className="form-group full-width">
                         <div className="form-field-wrapper">
-                            <label className="label-hidden" htmlFor="additional-message">Additional Message or Notes (max 300 characters)</label>
+                            <label className="label-hidden" htmlFor="additional-message">Pesan atau Keterangan Tambahan (max 300 karakter)</label>
                             <textarea
                                 id="additional-message"
                                 className="textarea-style"
-                                placeholder="Additional Message or Notes (max 300 characters)"
+                                placeholder="Pesan atau Keterangan Tambahan (max 300 karakter)"
                                 value={pesanTambahan}
                                 onChange={(e) => setPesanTambahan(e.target.value)}
                                 maxLength={300}
@@ -498,11 +505,11 @@ const ReservasiPage = () => {
                 </form>
             </motion.div>
 
-            {/* --- Content from LandingPage (Doctor List, About Us, Services, Contact) --- */}
-            {/* Doctor List */}
+            {/* --- Bagian Konten dari LandingPage (Daftar Dokter, Tentang Kami, Layanan, Kontak) --- */}
+            {/* Daftar Dokter */}
             <section id="dokter" className="section has-background-light">
                 <h2 className="title has-text-black has-text-centered mb-6" data-aos="fade-up">
-                    Doctor List
+                    Daftar Dokter
                 </h2>
 
                 {/* Wrapper for horizontal scroll, attached with ref */}
@@ -534,7 +541,7 @@ const ReservasiPage = () => {
                             <figure className="image is-4by3" style={{ overflow: 'hidden', borderRadius: '12px' }}>
                                 <img
                                     src="/dokterr.jpg"
-                                    alt="Clinic Illustration"
+                                    alt="Ilustrasi Klinik"
                                     style={{
                                         width: '100%',
                                         height: '100%',
@@ -547,20 +554,20 @@ const ReservasiPage = () => {
                         </div>
                         <div className="column is-6 has-text-left" data-aos="fade-left">
                             <h2 className="title is-3 has-text-black mb-3">
-                                About <span style={{ color: 'var(--primary)' }}>Our Clinic</span>
+                                Tentang <span style={{ color: 'var(--primary)' }}>Klinik Kami</span>
                             </h2>
                             <p className="subtitle is-5 has-text-black mb-4">
-                                Klinik Sehat has been established since 2010 and is committed to providing quality healthcare services.
+                                Klinik Sehat telah berdiri sejak 2010 dan berkomitmen untuk memberikan pelayanan kesehatan berkualitas.
                             </p>
                             <p className="has-text-black mb-4">
-                                We serve various health needs from general check-ups, vaccinations, to modern laboratory services. Always prioritizing patient comfort and safety.
+                                Kami melayani berbagai kebutuhan kesehatan mulai dari pemeriksaan umum, vaksinasi, hingga layanan laboratorium modern. Selalu mengutamakan kenyamanan dan keamanan pasien.
                             </p>
                             <a href="/tentang"
                                 className="button is-primary is-light animate__animated animate__fadeInUp"
                                 data-aos="fade-up"
                                 data-aos-delay="500"
                             >
-                                Learn More
+                                Selengkapnya
                             </a>
                         </div>
                     </div>
@@ -569,12 +576,12 @@ const ReservasiPage = () => {
 
             <section id="services" className="section has-background-light">
                 <div className="container">
-                    <h2 className="title has-text-black has-text-centered mb-6" data-aos="fade-up">Our Services</h2>
+                    <h2 className="title has-text-black has-text-centered mb-6" data-aos="fade-up">Layanan Kami</h2>
                     <div className="columns is-multiline is-centered">
                         {[
-                            { icon: 'fa-stethoscope', color: 'info', title: 'General Check-up', desc: 'General health services for all ages.' },
-                            { icon: 'fa-syringe', color: 'success', title: 'Vaccination', desc: 'Various types of vaccines available for children and adults.' },
-                            { icon: 'fa-vials', color: 'danger', title: 'Laboratory', desc: 'Blood, urine, and other examinations.' }
+                            { icon: 'fa-stethoscope', color: 'info', title: 'Pemeriksaan Umum', desc: 'Layanan kesehatan umum untuk semua usia.' },
+                            { icon: 'fa-syringe', color: 'success', title: 'Vaksinasi', desc: 'Tersedia berbagai jenis vaksin untuk anak dan dewasa.' },
+                            { icon: 'fa-vials', color: 'danger', title: 'Laboratorium', desc: 'Tes darah, urin, dan pemeriksaan lainnya.' }
                         ].map((item, i) => (
                             <div key={i} className="column is-one-third" data-aos="fade-up" data-aos-delay={i * 300}>
                                 <div className="box has-text-centered">
@@ -592,9 +599,9 @@ const ReservasiPage = () => {
 
             <section id="contact" className="section" data-aos="fade-up">
                 <div className="container has-text-centered">
-                    <h2 className="title has-text-black has-text-centered ">Contact Us</h2>
-                    <p>📍 Address: Jl. Kesehatan No.10, Bandung, Indonesia</p>
-                    <p>📞 Phone: (62) 87263817263</p>
+                    <h2 className="title has-text-black has-text-centered ">Hubungi Kami</h2>
+                    <p>📍 Alamat: Jl. Kesehatan No.10, Bandung, Indonesia</p>
+                    <p>📞 Telepon: (62) 87263817263</p>
                     <p>📧 Email: @klinikhafizh.com</p>
                 </div>
             </section>
@@ -635,13 +642,15 @@ const styles = {
         backgroundColor: 'var(--primary)',
         borderRadius: '12px',
         maxWidth: '400px',
-        margin: 'auto',
-        position: 'relative',
+        width: '90%', // Tambahkan ini untuk responsivitas yang lebih baik
+        padding: '30px', // Sesuaikan padding
+        textAlign: 'center',
+        position: 'fixed', // Kunci perubahan: fixed ke viewport
         zIndex: '1001',
         top: '50%',
         left: '50%',
         transform: 'translate(-50%, -50%)',
-
+        boxShadow: '0 10px 30px rgba(0, 0, 0, 0.2)', // Tambahkan bayangan untuk efek pop-up
     },
 };
 

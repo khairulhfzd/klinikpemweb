@@ -4,18 +4,25 @@ import AOS from 'aos';
 import 'aos/dist/aos.css';
 import '../Tentang.css';
 import { isAuthenticated } from '../utils/auth';
+import { Link } from 'react-router-dom'; // Import Link for navigation
 
 const Tentang = () => {
-
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
     useEffect(() => {
         AOS.init({ duration: 1000, once: true });
         setIsLoggedIn(isAuthenticated());
-      }, []);
+    }, []);
 
     return (
         <div className="tentang-page">
+            {/* Minimal Header with Logo and Text only, transparent and fixed */}
+            <div style={styles.minimalHeader}>
+                <Link to="/" style={styles.headerLink}>
+                    <img src="/logo2.png" alt="Klinik Hafizh Logo" style={styles.headerLogo} />
+                    <span style={styles.headerText}>Klinik Hafizh</span>
+                </Link>
+            </div>
 
             {/* Hero Section */}
             <section className="hero-section" id="hero">
@@ -41,7 +48,7 @@ const Tentang = () => {
             </section>
 
             {/* Layanan Section */}
-            <section className="services-modal-section" style={{
+            <section className="services-modal-section" id="layanan-section-id" style={{
                 position: 'relative',
                 zIndex: 10,
                 marginTop: '-120px',
@@ -93,10 +100,8 @@ const Tentang = () => {
                 </div>
             </section>
 
-
-
             {/* Sejarah Section */}
-            <section className="sejarah-section" id="sejarah" data-aos="fade-up" style={{ marginTop: '2rem' }}> {/* Sesuaikan margin atas */}
+            <section className="sejarah-section" id="sejarah" data-aos="fade-up" style={{ marginTop: '2rem' }}>
                 <div className="content-wrapper">
                     <img src="/dokterr.jpg" alt="Klinik Sejarah" className="img-sejarah" />
                     <div className="text">
@@ -112,7 +117,6 @@ const Tentang = () => {
                 </div>
             </section>
 
-            {/* Video Section */}
             {/* Video Section */}
             <section className="video-section" id="video" data-aos="fade-up" style={{ padding: '2rem 1rem', textAlign: 'center' }}>
                 <div className="video-container" style={{
@@ -136,7 +140,6 @@ const Tentang = () => {
                 </div>
             </section>
 
-
             {/* Map & Kontak Section */}
             <section className="map-section" id="lokasi" data-aos="fade-up">
                 <div className="content-wrapper">
@@ -155,7 +158,6 @@ const Tentang = () => {
                             loading="lazy"
                         ></iframe>
                     </div>
-
                 </div>
             </section>
 
@@ -167,11 +169,43 @@ const Tentang = () => {
                 transition={{ duration: 1 }}
             >
                 <div className="content">
-                    <p>&copy; 2025 Klinik Hafizh. All rights reserved.</p>
+                    <p>© 2025 Klinik Hafizh. All rights reserved.</p>
                 </div>
             </motion.footer>
         </div>
     );
+};
+
+// Styles for the new minimal header
+const styles = {
+    minimalHeader: {
+        position: 'fixed', // Tetap di posisi tetap saat discroll
+        top: 0,
+        left: 0,
+        width: '100%',
+        backgroundColor: 'transparent', // Latar belakang transparan
+        padding: '15px 20px', // Sesuaikan padding
+        zIndex: 1000, // Pastikan di atas konten lain
+        display: 'flex',
+        alignItems: 'center',
+        // boxShadow: 'none', // Hapus shadow jika tidak diinginkan
+    },
+    headerLink: {
+        display: 'flex',
+        alignItems: 'center',
+        textDecoration: 'none',
+        color: 'white', // Teks putih
+    },
+    headerLogo: {
+        height: '40px', // Ukuran logo, sesuaikan agar mirip gambar
+        marginRight: '10px',
+    },
+    headerText: {
+        fontSize: '1.4rem', // Ukuran teks, sesuaikan agar mirip gambar
+        fontWeight: 'bold',
+        letterSpacing: '0.05em',
+        textShadow: '1px 1px 3px rgba(0,0,0,0.5)', // Tambah shadow agar lebih terbaca
+    },
 };
 
 export default Tentang;

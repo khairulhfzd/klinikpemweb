@@ -1,108 +1,200 @@
+/* General Body and Container Styling */
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #f0f2f5; /* Fallback background */
+}
+
 .login-register-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  background: linear-gradient(135deg, #00c6ff, #0072ff);
-  padding: 2rem;
-  font-family: 'Segoe UI', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #0099ff, #0d52a5); /* Blue gradient background */
+    padding: 2rem;
+    box-sizing: border-box; /* Ensures padding doesn't cause overflow */
 }
 
+/* Form Container Styling */
 .form-container {
-  display: flex;
-  background: white;
-  border-radius: 20px;
-  overflow: hidden;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
-  max-width: 900px;
-  width: 100%;
-  min-height: 500px;
+    display: flex;
+    background: white;
+    border-radius: 20px;
+    overflow: hidden; /* Ensures child elements respect border-radius */
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    max-width: 900px; /* Max width for the whole form area */
+    width: 100%; /* Take full width up to max-width */
+    min-height: 500px; /* Minimum height for consistent layout */
 }
 
+/* Switch Section (Left/Right Panel for Login/Register Text & Button) */
 .switch-section {
-  flex: 1;
-  background: linear-gradient(135deg, #00c6ff, #0072ff);
-  color: white;
-  padding: 3rem 2rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  border-top-left-radius: 20px;
-  border-bottom-left-radius: 20px;
+    flex: 1; /* Takes equal width with form-section */
+    background: linear-gradient(135deg, #00c6ff, #0072ff); /* Blue gradient for switch section */
+    color: white;
+    padding: 3rem 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center; /* Center align text */
+    border-top-left-radius: 20px; /* Match form-container's border radius */
+    border-bottom-left-radius: 20px;
 }
 
 .switch-section h2 {
-  font-size: 2rem;
-  margin-bottom: 1rem;
-  font-weight: bold;
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    font-weight: bold;
+    line-height: 1.2; /* Improve readability */
 }
 
 .switch-section p {
-  margin-bottom: 2rem;
+    margin-bottom: 2rem;
+    font-size: 1rem;
+    line-height: 1.5;
 }
 
 .switch-section button {
-  padding: 0.7rem 1.5rem;
-  background: white;
-  color: #0072ff;
-  font-weight: bold;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: 0.3s ease;
+    padding: 0.7rem 1.5rem;
+    background: white;
+    color: #0072ff; /* Blue text color */
+    font-weight: bold;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.3s ease, color 0.3s ease; /* Smooth transition on hover */
+    font-size: 1rem;
 }
 
 .switch-section button:hover {
-  background: #f0f0f0;
+    background: #e0e0e0; /* Lighter grey on hover */
 }
 
+/* Form Section (Right/Left Panel for Actual Form) */
 .form-section {
-  flex: 1;
-  padding: 3rem 2rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
+    flex: 1; /* Takes equal width with switch-section */
+    padding: 3rem 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column; /* Stack elements vertically */
 }
 
+/* Form Styling */
 .form {
-  width: 100%;
-  max-width: 300px;
-  display: flex;
-  flex-direction: column;
+    width: 100%; /* Take full width of its parent (.form-section) */
+    max-width: 300px; /* Max width for the form itself */
+    display: flex;
+    flex-direction: column;
 }
 
 .form h3 {
-  margin-bottom: 1.5rem;
-  font-size: 1.5rem;
-  color: #0072ff;
-  text-align: center;
+    margin-bottom: 1.5rem;
+    font-size: 1.8rem; /* Slightly larger heading for the form */
+    color: #0072ff;
+    text-align: center;
+    font-weight: bold;
 }
 
-.form input {
-  padding: 0.8rem 1rem;
-  margin-bottom: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  outline: none;
-  transition: 0.3s;
+/* Styles for ALL form fields (input and select) */
+.form input,
+.form select.form-field { /* Targeting select with the specific class */
+    padding: 0.8rem 1rem;
+    margin-bottom: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 10px; /* Rounded corners for fields */
+    outline: none; /* Remove default outline */
+    transition: border-color 0.3s ease; /* Smooth transition for border color */
+    width: 100%; /* Ensure full width */
+    box-sizing: border-box; /* Include padding in element's total width */
+    font-size: 1rem; /* Consistent font size */
+    background-color: #fff; /* Ensure white background */
 }
 
-.form input:focus {
-  border-color: #0072ff;
+/* Focus styles for all form fields */
+.form input:focus,
+.form select.form-field:focus {
+    border-color: #0072ff; /* Highlight border on focus */
+    box-shadow: 0 0 0 3px rgba(0, 114, 255, 0.2); /* Soft blue glow on focus */
 }
 
+/* Specific styling for the select element to match input appearance */
+.form select.form-field {
+    -webkit-appearance: none; /* Remove default browser dropdown styling */
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23444%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-24.9%200L146.2%20188.6%2030.3%2069.4a17.6%2017.6%200%200%200-24.9%2024.9l130.5%20129.5c6.8%206.7%2017.7%206.7%2024.5%200l130.5-129.5a17.6%2017.6%200%200%200%200-24.9z%22%2F%3E%3C%2Fsvg%3E');
+    background-repeat: no-repeat;
+    background-position: right 1rem center; /* Position the custom arrow */
+    background-size: 14px; /* Size of the custom arrow */
+    padding-right: 2.5rem; /* Add padding to prevent text overlapping arrow */
+    cursor: pointer;
+}
+
+
+/* Form Button Styling */
 .form button {
-  padding: 0.8rem 1rem;
-  background: #00c6ff;
-  color: white;
-  font-weight: bold;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: 0.3s ease;
+    padding: 0.8rem 1rem;
+    background: #00c6ff; /* Blue button background */
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.3s ease; /* Smooth transition on hover */
+    font-size: 1.1rem;
+    margin-top: 0.5rem; /* Space above button */
 }
 
 .form button:hover {
-  background: #0072ff;
+    background: #0072ff; /* Darker blue on hover */
+}
+
+/* Error Message Styling */
+.error-msg {
+    color: #e74c3c; /* Red color for error messages */
+    margin-bottom: 1rem;
+    text-align: center;
+    font-size: 0.9rem;
+    padding: 5px;
+    background-color: #fde0dd; /* Light red background for error */
+    border-radius: 5px;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .form-container {
+        flex-direction: column; /* Stack sections vertically on small screens */
+        min-height: auto; /* Allow height to adjust content */
+    }
+    .switch-section, .form-section {
+        padding: 2rem; /* Reduce padding on small screens */
+        border-radius: 0; /* Remove specific side border-radius */
+    }
+    .switch-section {
+        border-radius: 20px 20px 0 0; /* Top corners rounded when stacked */
+    }
+    .form-section {
+        border-radius: 0 0 20px 20px; /* Bottom corners rounded when stacked */
+    }
+}
+
+/* For very small screens */
+@media (max-width: 480px) {
+    .login-register-container {
+        padding: 1rem;
+    }
+    .form-container {
+        border-radius: 15px; /* Slightly smaller border-radius */
+    }
+    .switch-section h2 {
+        font-size: 1.6rem;
+    }
+    .form h3 {
+        font-size: 1.3rem;
+    }
+    .form input, .form select.form-field, .form button, .switch-section button {
+        padding: 0.6rem 0.8rem; /* Smaller padding for inputs/buttons */
+        font-size: 0.9rem;
+    }
 }

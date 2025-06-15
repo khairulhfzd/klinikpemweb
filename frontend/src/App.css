@@ -118,6 +118,7 @@ body {
 #hero-section p {
   font-size: 1.15rem;
   margin-bottom: 1.5rem;
+  /* height: 100vh; */
 }
 
 #hero-section .button {

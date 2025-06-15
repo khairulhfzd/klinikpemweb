@@ -1,15 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 const AddDokter = () => {
-  const [nama, setNama] = useState("");
+  const [nama, setNama] = useState("Dr. ");
   const [gender, setGender] = useState("Laki-laki");
-  const [spesialis, setSpesialis] = useState("");
+  const [spesialis, setSpesialis] = useState("Spesialis "); // Initialize with "Spesialis "
   const [no_tlp, setNo_tlp] = useState("");
   const [foto, setFoto] = useState(null);
 
   const navigate = useNavigate();
+
+  // Focus on the end of the "Nama Dokter" input field when the component mounts
+  useEffect(() => {
+    const namaInput = document.getElementById("namaDokterInput");
+    if (namaInput) {
+      namaInput.setSelectionRange(namaInput.value.length, namaInput.value.length);
+    }
+
+    // Focus on the end of the "Spesialis" input field when the component mounts
+    const spesialisInput = document.getElementById("spesialisInput");
+    if (spesialisInput) {
+      spesialisInput.setSelectionRange(spesialisInput.value.length, spesialisInput.value.length);
+    }
+  }, []);
 
   const loadImage = (e) => {
     const file = e.target.files[0];
@@ -55,9 +69,16 @@ const AddDokter = () => {
               <input
                 type="text"
                 className="input"
+                id="namaDokterInput"
                 placeholder="Nama Dokter"
                 value={nama}
-                onChange={(e) => setNama(e.target.value)}
+                onChange={(e) => {
+                  if (!e.target.value.startsWith("Dr. ")) {
+                    setNama("Dr. " + e.target.value.replace("Dr. ", ""));
+                  } else {
+                    setNama(e.target.value);
+                  }
+                }}
                 required
               />
             </div>
@@ -84,9 +105,17 @@ const AddDokter = () => {
               <input
                 type="text"
                 className="input"
+                id="spesialisInput" // Add an ID for easy access
                 placeholder="Spesialis"
                 value={spesialis}
-                onChange={(e) => setSpesialis(e.target.value)}
+                onChange={(e) => {
+                  // Ensure "Spesialis " prefix is always present
+                  if (!e.target.value.startsWith("Spesialis ")) {
+                    setSpesialis("Spesialis " + e.target.value.replace("Spesialis ", ""));
+                  } else {
+                    setSpesialis(e.target.value);
+                  }
+                }}
                 required
               />
             </div>
