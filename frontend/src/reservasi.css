@@ -78,22 +78,44 @@
     gap: 20px;
 }
 
+/* Mengatur grid untuk form-group */
 .form-group {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); 
     gap: 20px;
-    flex-wrap: wrap;
+    align-items: start;
 }
 
-/* --- START: CHANGES FOR FORM FIELD CONSISTENCY --- */
+/* Tombol submit memenuhi satu baris grid */
+.btn-submit {
+    grid-column: 1/-1;
+    padding: 15px 30px;
+    background-color: #333;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s;
+    align-self: center;
+    justify-self: center;
+}
 
-/* Base styling for all form fields (inputs, textareas, and the wrapper for selects) */
+.btn-submit:hover {
+    background-color: #555;
+}
+
+/* Mengatur tampilan form-field-wrapper lebih rapi */
 .form-field-wrapper {
-    flex: 1; /* Makes fields take equal width within a form-group */
-    min-width: 250px; /* Minimum width before wrapping to new line */
+    position: relative;
+    flex: 1;
+    min-width: 250px;
 }
 
+/* Menghilangkan outline dan shadow pada input, select, dan textarea */
 .input-style,
-.textarea-style {
+.textarea-style,
+.select-style select {
     width: 100%;
     padding: 15px;
     border: 1px solid #ddd;
@@ -102,50 +124,36 @@
     box-sizing: border-box;
     background-color: #fff;
     color: #333;
-    /* Ensure no extra outlines or shadows */
-    outline: none; /* Crucial: Removes the default focus outline */
-    box-shadow: none; /* Ensures no default box shadow */
-}
-
-/* Specific styling for the select dropdowns */
-.select-style {
-    position: relative;
-    width: 100%;
-    border: 1px solid #ddd; /* Apply border to the wrapper */
-    border-radius: 8px;
-    box-sizing: border-box;
-    background-color: #fff; /* Ensure white background for the wrapper */
-    /* Ensure no extra outlines or shadows */
     outline: none;
     box-shadow: none;
 }
 
-.select-style select {
-    width: 100%;
-    padding: 15px;
-    border: none; /* Crucial: Remove the select's intrinsic border */
-    border-radius: 8px; /* For consistency, though mostly hidden by wrapper */
-    font-size: 16px;
+/* Mengatur tampilan select lebih rapi */
+.select-style {
+    position: relative;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    background: #fff;
     box-sizing: border-box;
-    appearance: none; /* Hides default browser arrow */
-    -webkit-appearance: none; /* For Safari/Chrome */
-    -moz-appearance: none; /* For Firefox */
-    background-color: transparent; /* Makes select background transparent to show wrapper's background */
-    color: #333;
-    cursor: pointer;
-    padding-right: 40px; /* Make space for our custom arrow */
-    /* NEW: Explicitly reset more properties for select */
-    outline: none; /* Remove focus outline on the select itself */
-    box-shadow: none; /* Remove any potential box shadow */
-    text-indent: 1px; /* Sometimes helps remove weird left-side lines */
-    text-overflow: ''; /* For older IE, might help with text truncation artifacts */
-    /* Further experimental resets if previous don't work */
-    background-image: none; /* Removes any default background images (like gradients) */
 }
 
-/* Custom arrow for select dropdowns */
+.select-style select {
+    padding-right: 40px;
+    appearance: none;
+    background-image: none;
+    background-color: transparent;
+    color: #333;
+    cursor: pointer;
+    border: none;
+    outline: none;
+    box-shadow: none;
+    text-indent: 1px;
+    text-overflow: '';
+}
+
+/* Panah custom select */
 .select-style::after {
-    content: '\25BC'; /* Unicode for a solid down arrow */
+    content: '\25BC';
     position: absolute;
     top: 50%;
     right: 15px;
@@ -154,6 +162,7 @@
     color: #555;
     font-size: 0.9em;
 }
+
 
 /* END: CHANGES FOR FORM FIELD CONSISTENCY */
 
@@ -229,4 +238,12 @@
     .reservation-hero h1 {
         font-size: 32px;
     }
+}
+
+.dokter-foto {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 8px; 
+    margin: 0px; 
 }

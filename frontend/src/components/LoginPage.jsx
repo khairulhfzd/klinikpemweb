@@ -4,6 +4,8 @@ import { motion } from 'framer-motion';
 import axios from 'axios';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { login } from '../utils/auth'; // Import the login function (assuming its path)
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const LoginPage = () => {
   // State variables for managing UI and form inputs
@@ -66,44 +68,45 @@ const LoginPage = () => {
 
   // Handler for registration form submission
   const handleRegister = async (e) => {
-    e.preventDefault(); // Prevent default form submission
-    setErrorMsg(''); // Clear any previous error messages
+    e.preventDefault();
+    setErrorMsg('');
 
-    // Basic client-side email validation
+    // Validasi email
     if (!email.includes('@') || !email.includes('.')) {
-      setErrorMsg("Format email tidak valid. Pastikan ada '@' dan '.'");
+      setErrorMsg("Format email tidak valid.");
+      toast.error("❌ Format email tidak valid.");
       return;
     }
 
     try {
-      // Send registration request to the backend
-      await axios.post("http://localhost:5000/auth/register", {
+      // Perform registration
+      await axios.post("http://localhost:5000/auth/Register", {
         nama,
         email,
         password,
         gender,
         alamat,
-        no_tlp: noTlp // Ensure variable name matches backend expectation
+        no_tlp: noTlp
       });
 
-      // On successful registration
-      alert("Registrasi berhasil! Silakan login dengan akun Anda.");
-      setIsLogin(true); // Switch to login form
-      // Clear registration form fields
+      toast.success("🎉 Registrasi berhasil! Silakan login.");
+
+      setIsLogin(true);
       setEmail('');
       setPassword('');
       setNama('');
-      setGender('Laki-laki'); // Reset gender to default
+      setGender('Laki-laki'); // Reset
       setAlamat('');
       setNoTlp('');
-
     } catch (error) {
-      // Handle registration errors
-      console.error("Registration error:", error);
-      const msg = error?.response?.data?.msg || "Registrasi gagal. Email mungkin sudah terdaftar atau data tidak valid.";
+      console.error("Registration error!", error);
+      const msg = error?.response?.data?.msg || "Registrasi gagal.";
       setErrorMsg(msg);
+      toast.error(`❌ ${msg}`);
     }
   };
+
+
 
   return (
     <div className="login-register-container">
@@ -151,37 +154,41 @@ const LoginPage = () => {
           ) : (
             // Register Form
             <form className="form" onSubmit={handleRegister}>
-              <h3>Register</h3>
+              <h3>Daftar</h3>
               {errorMsg && <p className="error-msg">{errorMsg}</p>}
+
               <input
                 type="text"
                 placeholder="Nama Lengkap"
                 value={nama}
-                onChange={e => setNama(e.target.value)}
+                onChange={(e) => setNama(e.target.value)}
                 required
               />
+
               <input
                 type="email"
                 placeholder="Email Anda"
                 value={email}
-                onChange={e => setEmail(e.target.value)}
+                onChange={(e) => setEmail(e.target.value)}
                 required
               />
+
               <input
                 type="password"
                 placeholder="Buat Kata Sandi"
                 value={password}
-                onChange={e => setPassword(e.target.value)}
+                onChange={(e) => setPassword(e.target.value)}
                 required
               />
 
               {/* Gender Dropdown */}
               <select
                 value={gender}
-                onChange={e => setGender(e.target.value)}
-                className="form-field" // Apply the class for styling
+                onChange={(e) => setGender(e.target.value)}
+                className="form-field"
                 required
               >
+                <option value="">Pilih Jenis Kelamin</option>
                 <option value="Laki-laki">Laki-laki</option>
                 <option value="Perempuan">Perempuan</option>
               </select>
@@ -190,16 +197,19 @@ const LoginPage = () => {
                 type="text"
                 placeholder="Alamat Lengkap"
                 value={alamat}
-                onChange={e => setAlamat(e.target.value)}
+                onChange={(e) => setAlamat(e.target.value)}
               />
+
               <input
-                type="tel" // Use type="tel" for phone numbers
+                type="tel"
                 placeholder="Nomor Telepon (contoh: 081234567890)"
                 value={noTlp}
-                onChange={e => setNoTlp(e.target.value)}
+                onChange={(e) => setNoTlp(e.target.value)}
               />
+
               <button type="submit">Daftar</button>
             </form>
+
           )}
         </motion.div>
       </motion.div>

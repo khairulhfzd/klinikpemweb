@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 const AddDokter = () => {
-  const [nama, setNama] = useState("Dr. ");
+  const [nama, setNama] = useState("dr. ");
   const [gender, setGender] = useState("Laki-laki");
   const [spesialis, setSpesialis] = useState("Spesialis "); // Initialize with "Spesialis "
   const [no_tlp, setNo_tlp] = useState("");
@@ -73,8 +73,8 @@ const AddDokter = () => {
                 placeholder="Nama Dokter"
                 value={nama}
                 onChange={(e) => {
-                  if (!e.target.value.startsWith("Dr. ")) {
-                    setNama("Dr. " + e.target.value.replace("Dr. ", ""));
+                  if (!e.target.value.startsWith("dr. ")) {
+                    setNama("dr. " + e.target.value.replace("dr. ", ""));
                   } else {
                     setNama(e.target.value);
                   }

@@ -192,12 +192,12 @@ const LandingPage = () => {
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ delay: 0.5, duration: 1 }}
               >
-                <figure className="image is-4by3" style={{ marginTop: '70px' }}>
+                <figure className="image is-4by3" style={{ marginTop: '100px' }}>
                   <img
-                    src="./dokter.png"
+                    src="./trio.png"
                     alt="Ilustrasi Dokter"
                     style={{
-                      maxHeight: '300px',
+                      maxHeight: '330px',
                       objectFit: 'contain',
                       transition: 'transform 0.5s ease',
                     }}

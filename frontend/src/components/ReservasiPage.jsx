@@ -397,20 +397,21 @@ const ReservasiPage = () => {
                     {/* Menampilkan foto dokter yang dipilih (jika tersedia) */}
                     {selectedDokter && selectedDokter.foto && (
                         <div className="has-text-centered mt-4 mb-4">
-                            <figure className="image is-128x128 is-inline-block">
+                            <figure >
                                 <img
-                                    className="is-rounded"
                                     src={`http://localhost:5000/images/${selectedDokter.foto}`}
                                     alt={selectedDokter.nama}
                                     onError={(e) => {
                                         e.target.onerror = null;
-                                        e.target.src = 'https://via.placeholder.com/128/d1c4e9/5e35b1?text=Dokter'; // Fallback
-                                        console.log('Error loading doctor photo:', `http://localhost:5000/images/${selectedDokter.foto}`);
+                                        e.target.src = 'https://via.placeholder.com/128/d1c4e9/5e35b1?text=Dokter';
+                                        console.log('Error loading doctor photo!', `http://localhost:5000/images/${selectedDokter.foto}`);
                                     }}
+                                    className="dokter-foto"
                                 />
                             </figure>
                         </div>
                     )}
+
 
                     {/* Kelompok Formulir Kedua: Alamat Email dan Jumlah Tamu */}
                     <div className="form-group">
