@@ -25,10 +25,10 @@ const EditJanji = () => {
       setError(null);
 
       const [usersRes, doktersRes, jadwalRes, janjiRes] = await Promise.all([
-        axios.get('http://localhost:5000/users'),
-        axios.get('http://localhost:5000/dokters'),
-        axios.get('http://localhost:5000/jadwal'),
-        axios.get(`http://localhost:5000/janji/${id}`),
+        axios.get('http://54.206.102.65:5000/users'),
+        axios.get('http://54.206.102.65:5000/dokters'),
+        axios.get('http://54.206.102.65:5000/jadwal'),
+        axios.get(`http://54.206.102.65:5000/janji/${id}`),
       ]);
 
       const janji = janjiRes.data;
@@ -70,7 +70,7 @@ const EditJanji = () => {
     }
 
     try {
-      await axios.patch(`http://localhost:5000/janji/${id}`, {
+      await axios.patch(`http://54.206.102.65:5000/janji/${id}`, {
         userId: selectedUser,
         dokterId: selectedDokterId,
         jadwalId: selectedJadwalId,
@@ -175,12 +175,12 @@ const EditJanji = () => {
                 <figure className="image is-128x128 is-inline-block mt-2">
                   <img
                     className="is-rounded"
-                    src={`http://localhost:5000/images/${selectedDokter.foto}`}
+                    src={`http://54.206.102.65:5000/images/${selectedDokter.foto}`}
                     alt={selectedDokter.nama}
                     onError={(e) => {
                       e.target.onerror = null;
                       e.target.src = 'placeholder_image_url_if_any.jpg'; // Fallback image
-                      console.log('Error loading doctor photo:', `http://localhost:5000/images/${selectedDokter.foto}`);
+                      console.log('Error loading doctor photo:', `http://54.206.102.65:5000/images/${selectedDokter.foto}`);
                     }}
                   />
                 </figure>

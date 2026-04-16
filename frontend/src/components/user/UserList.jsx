@@ -23,11 +23,11 @@ const UserList = () => {
   const getUsers = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("http://localhost:5000/users");
+      const res = await axios.get("http://54.206.102.65:5000/users");
       // Proses URL foto user
       const processedUsers = res.data.map(user => {
         if (user.foto && !user.foto.startsWith('http')) {
-          user.foto = `http://localhost:5000/images/${user.foto}`;
+          user.foto = `http://54.206.102.65:5000/images/${user.foto}`;
         }
         return user;
       });
@@ -49,7 +49,7 @@ const UserList = () => {
   const handleConfirmDelete = async () => {
     if (userToDeleteId) {
       try {
-        await axios.delete(`http://localhost:5000/users/${userToDeleteId}`);
+        await axios.delete(`http://54.206.102.65:5000/users/${userToDeleteId}`);
         getUsers(); // Refresh list
         setShowDeleteModal(false); // Close modal on success
         setUserToDeleteId(null);

@@ -22,11 +22,11 @@ const DokterList = () => {
   const getDokters = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("http://localhost:5000/dokters");
+      const res = await axios.get("http://54.206.102.65:5000/dokters");
       // Periksa dan sesuaikan URL foto dokter jika perlu
       const processedDokters = res.data.map(item => {
         if (item.foto && !item.foto.startsWith('http')) {
-          item.foto = `http://localhost:5000/images/${item.foto}`;
+          item.foto = `http://54.206.102.65:5000/images/${item.foto}`;
         }
         return item;
       });
@@ -48,7 +48,7 @@ const DokterList = () => {
   const handleConfirmDelete = async () => {
     if (dokterToDeleteId) {
       try {
-        await axios.delete(`http://localhost:5000/dokters/${dokterToDeleteId}`);
+        await axios.delete(`http://54.206.102.65:5000/dokters/${dokterToDeleteId}`);
         getDokters(); // Refresh list
         setShowDeleteModal(false); // Close modal on success
         setDokterToDeleteId(null);

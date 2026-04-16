@@ -19,10 +19,10 @@ const DashboardContent = () => {
                 setError(null);
 
                 const [doktersRes, usersRes, janjiRes, jadwalRes] = await Promise.all([
-                    axios.get('http://localhost:5000/dokters'),
-                    axios.get('http://localhost:5000/users'),
-                    axios.get('http://localhost:5000/janji'),
-                    axios.get('http://localhost:5000/jadwal'),
+                    axios.get('http://54.206.102.65:5000/dokters'),
+                    axios.get('http://54.206.102.65:5000/users'),
+                    axios.get('http://54.206.102.65:5000/janji'),
+                    axios.get('http://54.206.102.65:5000/jadwal'),
                 ]);
 
                 setSummary({
@@ -64,7 +64,7 @@ const DashboardContent = () => {
 
     const handleStatusChange = async (id, newStatus) => {
         try {
-            await axios.patch(`http://localhost:5000/janji/${id}`, { status: newStatus });
+            await axios.patch(`http://54.206.102.65:5000/janji/${id}`, { status: newStatus });
             setPendingReservations(prev => prev.filter(res => res.id !== id));
         } catch (err) {
             alert('Gagal mengubah status.');

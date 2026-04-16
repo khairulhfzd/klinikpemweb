@@ -23,13 +23,13 @@ const JanjiList = () => {
   const fetchJanji = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("http://localhost:5000/janji");
+      const res = await axios.get("http://54.206.102.65:5000/janji");
       const processedJanji = res.data.map(item => {
         if (item.user && item.user.foto && !item.user.foto.startsWith('http')) {
-          item.user.foto = `http://localhost:5000/images/${item.user.foto}`;
+          item.user.foto = `http://54.206.102.65:5000/images/${item.user.foto}`;
         }
         if (item.dokter && item.dokter.foto && !item.dokter.foto.startsWith('http')) {
-          item.dokter.foto = `http://localhost:5000/images/${item.dokter.foto}`;
+          item.dokter.foto = `http://54.206.102.65:5000/images/${item.dokter.foto}`;
         }
         return item;
       });
@@ -51,7 +51,7 @@ const JanjiList = () => {
   const handleConfirmDelete = async () => {
     if (janjiToDeleteId) {
       try {
-        await axios.delete(`http://localhost:5000/janji/${janjiToDeleteId}`);
+        await axios.delete(`http://54.206.102.65:5000/janji/${janjiToDeleteId}`);
         fetchJanji();
         setShowDeleteModal(false); // Close modal on success
         setJanjiToDeleteId(null);
@@ -70,7 +70,7 @@ const JanjiList = () => {
 
   const updateStatus = async (id, newStatus) => {
     try {
-      await axios.patch(`http://localhost:5000/janji/${id}`, { status: newStatus });
+      await axios.patch(`http://54.206.102.65:5000/janji/${id}`, { status: newStatus });
       fetchJanji();
     } catch (err) {
       console.error("Error updating status:", err);

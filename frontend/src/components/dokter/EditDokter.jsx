@@ -15,14 +15,14 @@ const EditDokter = () => {
 
   const getDokterById = useCallback(async () => {
     try {
-      const response = await axios.get(`http://localhost:5000/dokters/${id}`);
+      const response = await axios.get(`http://54.206.102.65:5000/dokters/${id}`);
       const data = response.data;
       setNama(data.nama);
       setGender(data.gender);
       setSpesialis(data.spesialis);
       setNo_tlp(data.no_tlp);
       if (data.foto) {
-        setCurrentFotoUrl(`http://localhost:5000/images/${data.foto}`);
+        setCurrentFotoUrl(`http://54.206.102.65:5000/images/${data.foto}`);
       } else {
         setCurrentFotoUrl("");
       }
@@ -59,7 +59,7 @@ const EditDokter = () => {
     }
 
     try {
-      await axios.patch(`http://localhost:5000/dokters/${id}`, formData, {
+      await axios.patch(`http://54.206.102.65:5000/dokters/${id}`, formData, {
         headers: {
           "Content-Type": "multipart/form-data"
         }

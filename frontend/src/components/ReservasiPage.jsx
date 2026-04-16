@@ -45,9 +45,9 @@ const ReservasiPage = () => {
 
                 // Fetch all necessary data: users, doctors, schedules
                 const [usersRes, doktersRes, jadwalRes] = await Promise.all([
-                    axios.get('http://localhost:5000/users'),
-                    axios.get('http://localhost:5000/dokters'),
-                    axios.get('http://localhost:5000/jadwal'),
+                    axios.get('http://54.206.102.65:5000/users'),
+                    axios.get('http://54.206.102.65:5000/dokters'),
+                    axios.get('http://54.206.102.65:5000/jadwal'),
                 ]);
 
                 setUsers(usersRes.data);
@@ -97,7 +97,7 @@ const ReservasiPage = () => {
     useEffect(() => {
         const user = users.find(u => u.id === parseInt(selectedUser));
         if (user) {
-            const photoUrl = user.foto ? `http://localhost:5000/images/${user.foto}` : '';
+            const photoUrl = user.foto ? `http://54.206.102.65:5000/images/${user.foto}` : '';
             setSelectedUserPhoto(photoUrl);
             setSelectedUserEmail(user.email || 'N/A');
             setSelectedUserPhone(user.no_tlp || 'N/A');
@@ -168,7 +168,7 @@ const ReservasiPage = () => {
 
         try {
             // Send reservation data to your backend
-            await axios.post('http://localhost:5000/janji', {
+            await axios.post('http://54.206.102.65:5000/janji', {
                 userId: parseInt(selectedUser), // Ensure userId is an integer
                 dokterId: parseInt(selectedDokterId), // Ensure dokterId is an integer
                 jadwalId: parseInt(selectedJadwalId), // Ensure jadwalId is an integer
@@ -399,12 +399,12 @@ const ReservasiPage = () => {
                         <div className="has-text-centered mt-4 mb-4">
                             <figure >
                                 <img
-                                    src={`http://localhost:5000/images/${selectedDokter.foto}`}
+                                    src={`http://54.206.102.65:5000/images/${selectedDokter.foto}`}
                                     alt={selectedDokter.nama}
                                     onError={(e) => {
                                         e.target.onerror = null;
                                         e.target.src = 'https://via.placeholder.com/128/d1c4e9/5e35b1?text=Dokter';
-                                        console.log('Error loading doctor photo!', `http://localhost:5000/images/${selectedDokter.foto}`);
+                                        console.log('Error loading doctor photo!', `http://54.206.102.65:5000/images/${selectedDokter.foto}`);
                                     }}
                                     className="dokter-foto"
                                 />
@@ -522,7 +522,7 @@ const ReservasiPage = () => {
                             <div key={index} className="dokter-card-column">
                                 <div className="box dokter-card-content" data-aos="zoom-in" data-aos-delay={index * 100}>
                                     <img
-                                        src={`http://localhost:5000/images/${dokter.foto}`}
+                                        src={`http://54.206.102.65:5000/images/${dokter.foto}`}
                                         alt={dokter.nama}
                                         onError={(e) => { e.target.src = '/default-foto.png'; }} // Fallback image
                                     />

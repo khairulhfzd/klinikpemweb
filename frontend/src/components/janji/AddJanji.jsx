@@ -30,9 +30,9 @@ const AddJanji = () => {
         setError(null);
 
         const [usersRes, doktersRes, jadwalRes] = await Promise.all([
-          axios.get('http://localhost:5000/users'),
-          axios.get('http://localhost:5000/dokters'),
-          axios.get('http://localhost:5000/jadwal'),
+          axios.get('http://54.206.102.65:5000/users'),
+          axios.get('http://54.206.102.65:5000/dokters'),
+          axios.get('http://54.206.102.65:5000/jadwal'),
         ]);
 
         setUsers(usersRes.data);
@@ -62,7 +62,7 @@ const AddJanji = () => {
     }
 
     try {
-      await axios.post('http://localhost:5000/janji', {
+      await axios.post('http://54.206.102.65:5000/janji', {
         userId: selectedUser,
         dokterId: selectedDokterId,
         jadwalId: selectedJadwalId,
@@ -205,12 +205,12 @@ const AddJanji = () => {
                 <figure className="image is-128x128 is-inline-block mt-2">
                     <img
                         className="is-rounded"
-                        src={`http://localhost:5000/images/${selectedDokter.foto}`}
+                        src={`http://54.206.102.65:5000/images/${selectedDokter.foto}`}
                         alt={selectedDokter.nama}
                         onError={(e) => {
                            e.target.onerror = null;
                            e.target.src = 'placeholder_image_url_if_any.jpg';
-                           console.log('Error loading doctor photo!', `http://localhost:5000/images/${selectedDokter.foto}`);
+                           console.log('Error loading doctor photo!', `http://54.206.102.65:5000/images/${selectedDokter.foto}`);
                         }}
                     />
                 </figure>
